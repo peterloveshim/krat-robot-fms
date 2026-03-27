@@ -6,10 +6,10 @@ import type { IncidentSeverity, IncidentStatus } from "@/lib/mock-data";
 
 function SeverityDot({ severity }: { severity: IncidentSeverity }) {
   const colorMap: Record<IncidentSeverity, string> = {
-    CRITICAL: "bg-[var(--krat-red)]",
-    HIGH: "bg-[var(--krat-amber)]",
-    MEDIUM: "bg-[var(--krat-accent)]",
-    LOW: "bg-[var(--krat-tx3)]",
+    CRITICAL: "bg-krat-red",
+    HIGH: "bg-krat-amber",
+    MEDIUM: "bg-krat-accent",
+    LOW: "bg-krat-tx3",
   };
   return (
     <span
@@ -22,19 +22,19 @@ function IncidentStatusBadge({ status }: { status: IncidentStatus }) {
   const config: Record<IncidentStatus, { label: string; className: string }> = {
     OPEN: {
       label: "OPEN",
-      className: "bg-[var(--krat-red-bg)] text-[var(--krat-red)] hover:bg-[var(--krat-red-bg)]",
+      className: "bg-krat-red-bg text-krat-red hover:bg-krat-red-bg",
     },
     INVESTIGATING: {
       label: "조사중",
-      className: "bg-[var(--krat-amber-bg)] text-[var(--krat-amber)] hover:bg-[var(--krat-amber-bg)]",
+      className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
     },
     RESOLVED: {
       label: "해결됨",
-      className: "bg-[var(--krat-green-bg)] text-[var(--krat-green)] hover:bg-[var(--krat-green-bg)]",
+      className: "bg-krat-green-bg text-krat-green hover:bg-krat-green-bg",
     },
     CLOSED: {
       label: "종료",
-      className: "bg-[rgba(255,255,255,0.06)] text-[var(--krat-tx3)] hover:bg-[rgba(255,255,255,0.06)]",
+      className: "bg-[rgba(255,255,255,0.06)] text-krat-tx3 hover:bg-[rgba(255,255,255,0.06)]",
     },
   };
   const c = config[status];
@@ -49,19 +49,19 @@ function SeverityBadge({ severity }: { severity: IncidentSeverity }) {
   const config: Record<IncidentSeverity, { label: string; className: string }> = {
     CRITICAL: {
       label: "CRITICAL",
-      className: "bg-[var(--krat-red-bg)] text-[var(--krat-red)] hover:bg-[var(--krat-red-bg)]",
+      className: "bg-krat-red-bg text-krat-red hover:bg-krat-red-bg",
     },
     HIGH: {
       label: "HIGH",
-      className: "bg-[var(--krat-amber-bg)] text-[var(--krat-amber)] hover:bg-[var(--krat-amber-bg)]",
+      className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
     },
     MEDIUM: {
       label: "MEDIUM",
-      className: "bg-[rgba(59,130,246,0.12)] text-[var(--krat-accent)] hover:bg-[rgba(59,130,246,0.12)]",
+      className: "bg-[rgba(59,130,246,0.12)] text-krat-accent hover:bg-[rgba(59,130,246,0.12)]",
     },
     LOW: {
       label: "LOW",
-      className: "bg-[rgba(255,255,255,0.06)] text-[var(--krat-tx3)] hover:bg-[rgba(255,255,255,0.06)]",
+      className: "bg-[rgba(255,255,255,0.06)] text-krat-tx3 hover:bg-[rgba(255,255,255,0.06)]",
     },
   };
   const c = config[severity];
@@ -80,14 +80,14 @@ export function IncidentList() {
         {incidents.map((incident) => (
           <Card
             key={incident.id}
-            className="bg-[var(--krat-bg2)] border-[var(--krat-border)] rounded-[var(--krat-radius)] shadow-none"
+            className="bg-krat-bg2 border-krat-border rounded-krat shadow-none"
           >
             <CardContent className="px-4 py-3.5">
               <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-3">
                 <SeverityDot severity={incident.severity} />
                 <div className="min-w-0">
                   <div className="text-[13px] font-medium truncate">{incident.title}</div>
-                  <div className="text-[11px] text-[var(--krat-tx3)] mt-0.5">
+                  <div className="text-[11px] text-krat-tx3 mt-0.5">
                     {incident.complexName} · {incident.zoneName} · {incident.occurredAt}
                   </div>
                 </div>

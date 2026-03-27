@@ -6,11 +6,11 @@ type ScoreBadgeProps = {
 export function ScoreBadge({ value, suffix = "%" }: ScoreBadgeProps) {
   let colorClass: string;
   if (value >= 90) {
-    colorClass = "text-[var(--krat-green)]";
+    colorClass = "text-krat-green";
   } else if (value >= 50) {
-    colorClass = "text-[var(--krat-amber)]";
+    colorClass = "text-krat-amber";
   } else {
-    colorClass = "text-[var(--krat-red)]";
+    colorClass = "text-krat-red";
   }
 
   return (

@@ -9,39 +9,39 @@ type StatusConfig = {
 const STATUS_MAP: Record<RobotStatus, StatusConfig> = {
   ONLINE: {
     label: "대기",
-    className: "bg-[var(--krat-green-bg)] text-[var(--krat-green)] hover:bg-[var(--krat-green-bg)]",
+    className: "bg-krat-green-bg text-krat-green hover:bg-krat-green-bg",
   },
   IDLE: {
     label: "대기",
-    className: "bg-[var(--krat-green-bg)] text-[var(--krat-green)] hover:bg-[var(--krat-green-bg)]",
+    className: "bg-krat-green-bg text-krat-green hover:bg-krat-green-bg",
   },
   WORKING: {
     label: "청소중",
-    className: "bg-[var(--krat-purple-bg)] text-[var(--krat-purple)] hover:bg-[var(--krat-purple-bg)]",
+    className: "bg-krat-purple-bg text-krat-purple hover:bg-krat-purple-bg",
   },
   CHARGING: {
     label: "충전중",
-    className: "bg-[rgba(59,130,246,0.12)] text-[var(--krat-accent)] hover:bg-[rgba(59,130,246,0.12)]",
+    className: "bg-[rgba(59,130,246,0.12)] text-krat-accent hover:bg-[rgba(59,130,246,0.12)]",
   },
   RETURNING: {
     label: "복귀중",
-    className: "bg-[rgba(59,130,246,0.12)] text-[var(--krat-accent)] hover:bg-[rgba(59,130,246,0.12)]",
+    className: "bg-[rgba(59,130,246,0.12)] text-krat-accent hover:bg-[rgba(59,130,246,0.12)]",
   },
   ERROR: {
     label: "에러",
-    className: "bg-[var(--krat-red-bg)] text-[var(--krat-red)] hover:bg-[var(--krat-red-bg)]",
+    className: "bg-krat-red-bg text-krat-red hover:bg-krat-red-bg",
   },
   OFFLINE: {
     label: "오프라인",
-    className: "bg-[rgba(255,255,255,0.06)] text-[var(--krat-tx3)] hover:bg-[rgba(255,255,255,0.06)]",
+    className: "bg-[rgba(255,255,255,0.06)] text-krat-tx3 hover:bg-[rgba(255,255,255,0.06)]",
   },
   MANUAL: {
     label: "수동",
-    className: "bg-[var(--krat-amber-bg)] text-[var(--krat-amber)] hover:bg-[var(--krat-amber-bg)]",
+    className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
   },
   MAINTENANCE: {
     label: "점검중",
-    className: "bg-[var(--krat-amber-bg)] text-[var(--krat-amber)] hover:bg-[var(--krat-amber-bg)]",
+    className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
   },
 };
 

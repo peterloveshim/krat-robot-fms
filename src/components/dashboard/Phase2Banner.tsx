@@ -11,11 +11,11 @@ export function Phase2Banner() {
   ];
 
   return (
-    <div className="border border-dashed border-[var(--krat-border)] rounded-[var(--krat-radius)] bg-[var(--krat-bg3)] px-5 py-5 text-center mt-6">
-      <div className="text-[13px] font-semibold text-[var(--krat-tx3)] mb-1.5">
+    <div className="border border-dashed border-krat-border rounded-krat bg-krat-bg3 px-5 py-5 text-center mt-6">
+      <div className="text-[13px] font-semibold text-krat-tx3 mb-1.5">
         Phase 2에서 추가될 영역
       </div>
-      <div className="text-[12px] text-[var(--krat-tx3)] opacity-60">
+      <div className="text-[12px] text-krat-tx3 opacity-60">
         {features.join(" · ")}
       </div>
     </div>

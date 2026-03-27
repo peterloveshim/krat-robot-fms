@@ -41,6 +41,27 @@
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
+
+  /* KRAT FMS 색상 토큰 — Tailwind 유틸리티로 등록 */
+  --color-krat-bg: var(--krat-bg);
+  --color-krat-bg2: var(--krat-bg2);
+  --color-krat-bg3: var(--krat-bg3);
+  --color-krat-bg4: var(--krat-bg4);
+  --color-krat-tx: var(--krat-tx);
+  --color-krat-tx2: var(--krat-tx2);
+  --color-krat-tx3: var(--krat-tx3);
+  --color-krat-accent: var(--krat-accent);
+  --color-krat-accent2: var(--krat-accent2);
+  --color-krat-green: var(--krat-green);
+  --color-krat-green-bg: var(--krat-green-bg);
+  --color-krat-red: var(--krat-red);
+  --color-krat-red-bg: var(--krat-red-bg);
+  --color-krat-amber: var(--krat-amber);
+  --color-krat-amber-bg: var(--krat-amber-bg);
+  --color-krat-purple: var(--krat-purple);
+  --color-krat-purple-bg: var(--krat-purple-bg);
+  --color-krat-border: var(--krat-border);
+  --radius-krat: var(--krat-radius);
 }
 
 /* KRAT FMS 다크 테마 — shadcn 변수 오버라이드 */
