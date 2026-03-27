@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - DB 스키마: `docs/db_schema.sql`
 - UI 레퍼런스: `docs/dashboard_example.html` (다크 테마)
 
-> **현재 상태**: 설계/문서화 단계. 애플리케이션 코드 미존재. 스키마 v4 기준으로 개발 시작.
+> **현재 상태**: Phase 1 UI 구현 진행 중. 목업 데이터 기반 대시보드 완성. Supabase 연동 미완료.
 
 ---
 
@@ -73,6 +73,32 @@ complexes (단지)
 - lucide-react (https://lucide.dev/guide/react/getting-started)
 - Supabase
 
+### Tailwind v4 CSS 변수 사용 규칙
+
+KRAT FMS 색상 토큰은 `globals.css`의 `@theme inline`에 등록되어 있다.
+`bg-[var(--krat-xxx)]` 형태의 arbitrary value 사용 금지 — 반드시 Tailwind 유틸리티 클래스를 사용할 것.
+
+```tsx
+// ✅ Good — @theme inline 토큰 사용
+<div className="bg-krat-bg text-krat-tx2 border-krat-border" />
+
+// ❌ Bad — arbitrary var() 사용 금지 (IntelliSense warning 발생)
+<div className="bg-[var(--krat-bg)] text-[var(--krat-tx2)]" />
+```
+
+**등록된 토큰 목록** (`bg-*` / `text-*` / `border-*` 등 모든 색상 유틸리티에서 사용 가능):
+
+| 토큰 | 용도 |
+|------|------|
+| `krat-bg` / `krat-bg2` / `krat-bg3` / `krat-bg4` | 배경 레이어 (어두운 순) |
+| `krat-tx` / `krat-tx2` / `krat-tx3` | 텍스트 (밝은 순) |
+| `krat-accent` / `krat-accent2` | 파란색 강조 |
+| `krat-green` / `krat-green-bg` | 정상/활성 상태 |
+| `krat-red` / `krat-red-bg` | 오류/위험 상태 |
+| `krat-amber` / `krat-amber-bg` | 경고 상태 |
+| `krat-purple` / `krat-purple-bg` | 보조 강조 |
+| `krat-border` | 구분선/테두리 |
+
 ### Supabase 설정 시 주의사항
 
 - PostGIS 확장 필수: `CREATE EXTENSION IF NOT EXISTS "postgis";`
@@ -111,9 +137,9 @@ complexes (단지)
 ### 단계별 검증 절차
 
 ```
-1. pnpm typecheck   # TypeScript 오류 먼저 확인
-2. pnpm lint        # ESLint 오류 확인
-3. Playwright MCP   # UI/기능 동작 확인 (변경 부분 + 사이드 이펙트 예상 영역)
+1. npx tsc --noEmit  # TypeScript 오류 먼저 확인 (pnpm typecheck 미등록)
+2. pnpm lint         # ESLint 오류 확인
+3. Playwright MCP    # UI/기능 동작 확인 (변경 부분 + 사이드 이펙트 예상 영역)
 4. 오류 발생 시 → 수정 → 1번부터 재실행
 ```
 
