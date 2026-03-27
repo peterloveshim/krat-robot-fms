@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KRAT FMS Dashboard v2.1 — Phase 1 Design Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C0E12; --bg2: #141820; --bg3: #1A1F2B; --bg4: #222836;
+  --tx: #E8E6E1; --tx2: #9A9890; --tx3: #6B6860;
+  --accent: #3B82F6; --accent2: #2563EB;
+  --green: #22C55E; --green-bg: rgba(34,197,94,.12);
+  --red: #EF4444; --red-bg: rgba(239,68,68,.12);
+  --amber: #F59E0B; --amber-bg: rgba(245,158,11,.12);
+  --purple: #8B5CF6;
+  --border: rgba(255,255,255,.06);
+  --radius: 10px;
+  --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--tx); font-family: var(--font); font-size: 14px; line-height: 1.5; }
+a { color: var(--accent); text-decoration: none; }
+
+/* Layout */
+.shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; }
+.main { padding: 28px 32px; overflow-y: auto; }
+
+/* Sidebar */
+.logo { padding: 0 20px 24px; display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
+.logo-text { font-size: 15px; font-weight: 600; letter-spacing: -.02em; }
+.logo-ver { font-size: 10px; color: var(--tx3); font-family: var(--mono); }
+
+.nav { flex: 1; padding: 0 8px; }
+.nav-section { font-size: 10px; font-weight: 600; color: var(--tx3); text-transform: uppercase; letter-spacing: .08em; padding: 16px 12px 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: var(--tx2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; margin-bottom: 2px; }
+.nav-item:hover { background: rgba(255,255,255,.04); color: var(--tx); }
+.nav-item.active { background: rgba(59,130,246,.12); color: var(--accent); }
+.nav-item svg { width: 18px; height: 18px; opacity: .7; flex-shrink: 0; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 10px; }
+.nb-blue { background: rgba(59,130,246,.15); color: var(--accent); }
+.nb-red { background: var(--red-bg); color: var(--red); }
+.nav-item.ph2 { opacity: .35; pointer-events: none; }
+.nav-item.ph2::after { content: 'Phase 2'; font-size: 9px; margin-left: auto; background: rgba(255,255,255,.06); padding: 1px 6px; border-radius: 6px; color: var(--tx3); }
+
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
+.user-row { display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; }
+.user-name { font-size: 13px; font-weight: 500; }
+.user-role { font-size: 11px; color: var(--tx3); }
+
+/* Page header */
+.page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.page-title { font-size: 22px; font-weight: 700; letter-spacing: -.03em; }
+.page-sub { font-size: 13px; color: var(--tx2); margin-top: 2px; }
+.time-badge { font-family: var(--mono); font-size: 12px; color: var(--tx3); background: var(--bg3); padding: 6px 12px; border-radius: 8px; }
+.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* KPI Row */
+.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+.kpi { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.kpi-label { font-size: 12px; color: var(--tx3); font-weight: 500; margin-bottom: 6px; }
+.kpi-val { font-size: 26px; font-weight: 700; letter-spacing: -.03em; }
+.kpi-delta { font-size: 11px; font-weight: 500; margin-top: 4px; }
+.kpi-up { color: var(--green); }
+.kpi-down { color: var(--red); }
+.kpi-neutral { color: var(--tx3); }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--tx3); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; }
+.tab:hover { color: var(--tx2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Section */
+.section { margin-bottom: 28px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.section-title { font-size: 15px; font-weight: 600; }
+.section-link { font-size: 12px; color: var(--accent); font-weight: 500; }
+
+/* Robot Cards */
+.robot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.robot-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color .15s; cursor: pointer; }
+.robot-card:hover { border-color: rgba(59,130,246,.3); }
+.rc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.rc-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.rc-icon-wet { background: rgba(59,130,246,.12); color: var(--accent); }
+.rc-icon-dry { background: rgba(245,158,11,.12); color: var(--amber); }
+.rc-name { font-size: 14px; font-weight: 600; }
+.rc-serial { font-size: 11px; color: var(--tx3); font-family: var(--mono); }
+.rc-status { margin-left: auto; }
+.status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.st-online { background: var(--green-bg); color: var(--green); }
+.st-charging { background: rgba(59,130,246,.12); color: var(--accent); }
+.st-cleaning { background: rgba(139,92,246,.12); color: var(--purple); }
+.st-error { background: var(--red-bg); color: var(--red); }
+.st-offline { background: rgba(255,255,255,.06); color: var(--tx3); }
+.rc-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.rc-stat { background: var(--bg3); border-radius: 6px; padding: 8px 10px; text-align: center; }
+.rc-stat-val { font-size: 15px; font-weight: 600; }
+.rc-stat-label { font-size: 10px; color: var(--tx3); margin-top: 2px; }
+.rc-zone { font-size: 12px; color: var(--tx2); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+.rc-zone svg { width: 14px; height: 14px; opacity: .5; }
+
+/* Complex Cards */
+.complex-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.complex-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.cc-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.cc-district { font-size: 11px; color: var(--tx3); margin-bottom: 12px; }
+.cc-stats { display: flex; gap: 16px; }
+.cc-stat { text-align: center; }
+.cc-stat-val { font-size: 18px; font-weight: 700; }
+.cc-stat-label { font-size: 10px; color: var(--tx3); }
+
+/* Mission Table */
+.table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; font-weight: 600; color: var(--tx3); text-transform: uppercase; letter-spacing: .05em; text-align: left; padding: 12px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+tr:last-child td { border: none; }
+tr:hover td { background: rgba(255,255,255,.02); }
+.score { font-weight: 600; font-family: var(--mono); }
+.score-good { color: var(--green); }
+.score-mid { color: var(--amber); }
+.score-bad { color: var(--red); }
+
+/* Incident mini */
+.incident-list { display: flex; flex-direction: column; gap: 8px; }
+.incident-row { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px; align-items: center; }
+.inc-sev { width: 8px; height: 8px; border-radius: 50%; }
+.sev-critical { background: var(--red); }
+.sev-high { background: var(--amber); }
+.sev-medium { background: var(--accent); }
+.sev-low { background: var(--tx3); }
+.inc-title { font-size: 13px; font-weight: 500; }
+.inc-meta { font-size: 11px; color: var(--tx3); }
+.inc-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+.is-open { background: var(--red-bg); color: var(--red); }
+.is-resolved { background: var(--green-bg); color: var(--green); }
+
+/* Consumable bars */
+.cons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.cons-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.cons-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cons-name { font-size: 13px; font-weight: 500; }
+.cons-pct { font-size: 13px; font-weight: 600; font-family: var(--mono); }
+.cons-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.cons-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+.cf-ok { background: var(--green); }
+.cf-warn { background: var(--amber); }
+.cf-danger { background: var(--red); }
+.cons-robot { font-size: 11px; color: var(--tx3); margin-top: 6px; }
+
+/* Phase 2 placeholder */
+.ph2-banner { background: var(--bg3); border: 1px dashed var(--border); border-radius: var(--radius); padding: 20px; text-align: center; margin-top: 24px; }
+.ph2-banner-title { font-size: 13px; font-weight: 600; color: var(--tx3); margin-bottom: 4px; }
+.ph2-banner-desc { font-size: 12px; color: var(--tx3); opacity: .6; }
+
+/* Responsive note */
+.ref-note { position: fixed; bottom: 0; left: 0; right: 0; background: var(--accent2); color: #fff; text-align: center; padding: 8px; font-size: 12px; font-weight: 500; z-index: 100; }
+</style>
+</head>
+<body>
+
+<div class="ref-note">디자인 레퍼런스 (Phase 1 범위) — 프리랜서 개발 시 화면 구성/색상/레이아웃 참조용</div>
+
+<div class="shell">
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">K</div>
+    <div>
+      <div class="logo-text">KRAT FMS</div>
+      <div class="logo-ver">v2.2 Phase 1</div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">모니터링</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      대시보드
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      로봇 현황
+      <span class="nav-badge nb-blue">15</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5z"/><path d="M6 9h.01"/></svg>
+      미션 기록
+    </div>
+
+    <div class="nav-section">운영</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      인시던트
+      <span class="nav-badge nb-red">3</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+      소모품
+    </div>
+
+    <div class="nav-section">Phase 2 (예정)</div>
+    <div class="nav-item ph2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      구역별 현황
+    </div>
+    <div class="nav-item ph2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      차트/리포트
+    </div>
+    <div class="nav-item ph2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      상호작용 이벤트
+    </div>
+    <div class="nav-item ph2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      에너지 분석
+    </div>
+    <div class="nav-item ph2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      설정
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar">강</div>
+      <div>
+        <div class="user-name">강민수</div>
+        <div class="user-role">ADMIN</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main" style="padding-bottom:60px">
+
+  <!-- Page Header -->
+  <div class="page-head">
+    <div>
+      <div class="page-title">대시보드</div>
+      <div class="page-sub">크라트로보틱스 FMS — 8개 단지 15대 로봇</div>
+    </div>
+    <div class="time-badge"><span class="live-dot"></span>LIVE · 2026-04-15 14:32 KST</div>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">총 로봇</div>
+      <div class="kpi-val">15</div>
+      <div class="kpi-delta kpi-neutral">8개 단지 배치</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">가동 중</div>
+      <div class="kpi-val" style="color:var(--green)">12</div>
+      <div class="kpi-delta kpi-up">가동률 80%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">금일 미션</div>
+      <div class="kpi-val">34</div>
+      <div class="kpi-delta kpi-up">+8 vs 어제</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">금일 청소면적</div>
+      <div class="kpi-val">4,280<span style="font-size:14px;color:var(--tx2)">m²</span></div>
+      <div class="kpi-delta kpi-up">+12% vs 평균</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">미해결 인시던트</div>
+      <div class="kpi-val" style="color:var(--red)">3</div>
+      <div class="kpi-delta kpi-down">HIGH 1건</div>
+    </div>
+  </div>
+
+  <!-- Robot Cards Section -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">로봇 현황</div>
+      <div class="section-link">전체 보기 →</div>
+    </div>
+    <div class="robot-grid">
+
+      <div class="robot-card">
+        <div class="rc-head">
+          <div class="rc-icon rc-icon-wet">W</div>
+          <div>
+            <div class="rc-name">포레온-W01</div>
+            <div class="rc-serial">CLB-W-001</div>
+          </div>
+          <div class="rc-status"><span class="status st-cleaning">청소중</span></div>
+        </div>
+        <div class="rc-stats">
+          <div class="rc-stat"><div class="rc-stat-val" style="color:var(--green)">78%</div><div class="rc-stat-label">배터리</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">142</div><div class="rc-stat-label">금일 m²</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">5</div><div class="rc-stat-label">미션</div></div>
+        </div>
+        <div class="rc-zone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          올림픽파크포레온 · B1 주차장 A구역
+        </div>
+      </div>
+
+      <div class="robot-card">
+        <div class="rc-head">
+          <div class="rc-icon rc-icon-wet">W</div>
+          <div>
+            <div class="rc-name">포레온-W02</div>
+            <div class="rc-serial">CLB-W-002</div>
+          </div>
+          <div class="rc-status"><span class="status st-charging">충전중</span></div>
+        </div>
+        <div class="rc-stats">
+          <div class="rc-stat"><div class="rc-stat-val" style="color:var(--accent)">32%</div><div class="rc-stat-label">배터리</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">310</div><div class="rc-stat-label">금일 m²</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">8</div><div class="rc-stat-label">미션</div></div>
+        </div>
+        <div class="rc-zone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          올림픽파크포레온 · B1 충전독
+        </div>
+      </div>
+
+      <div class="robot-card">
+        <div class="rc-head">
+          <div class="rc-icon rc-icon-dry">D</div>
+          <div>
+            <div class="rc-name">TheH-D01</div>
+            <div class="rc-serial">CLB-D-009</div>
+          </div>
+          <div class="rc-status"><span class="status st-error">에러</span></div>
+        </div>
+        <div class="rc-stats">
+          <div class="rc-stat"><div class="rc-stat-val" style="color:var(--red)">15%</div><div class="rc-stat-label">배터리</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">89</div><div class="rc-stat-label">금일 m²</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">2</div><div class="rc-stat-label">미션</div></div>
+        </div>
+        <div class="rc-zone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          The H 퍼스티어 · 커뮤니티센터
+        </div>
+      </div>
+
+      <div class="robot-card">
+        <div class="rc-head">
+          <div class="rc-icon rc-icon-wet">W</div>
+          <div>
+            <div class="rc-name">타팰3-W01</div>
+            <div class="rc-serial">CLB-W-011</div>
+          </div>
+          <div class="rc-status"><span class="status st-online">대기</span></div>
+        </div>
+        <div class="rc-stats">
+          <div class="rc-stat"><div class="rc-stat-val" style="color:var(--green)">95%</div><div class="rc-stat-label">배터리</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">220</div><div class="rc-stat-label">금일 m²</div></div>
+          <div class="rc-stat"><div class="rc-stat-val">6</div><div class="rc-stat-label">미션</div></div>
+        </div>
+        <div class="rc-zone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          타워팰리스 3차 · 로비
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Complex Summary -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">단지별 요약</div>
+    </div>
+    <div class="complex-grid">
+      <div class="complex-card">
+        <div class="cc-name">올림픽파크포레온</div>
+        <div class="cc-district">강동구 · 습식 4대</div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val" style="color:var(--green)">4</div><div class="cc-stat-label">가동</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">18</div><div class="cc-stat-label">미션</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">2,140</div><div class="cc-stat-label">m²</div></div>
+        </div>
+      </div>
+      <div class="complex-card">
+        <div class="cc-name">개포자이프레지던스</div>
+        <div class="cc-district">강남구 · 습식1+건식1</div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val" style="color:var(--green)">2</div><div class="cc-stat-label">가동</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">6</div><div class="cc-stat-label">미션</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">780</div><div class="cc-stat-label">m²</div></div>
+        </div>
+      </div>
+      <div class="complex-card">
+        <div class="cc-name">The H 퍼스티어</div>
+        <div class="cc-district">강남구 · 습식2+건식2</div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val" style="color:var(--amber)">3</div><div class="cc-stat-label">가동</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">8</div><div class="cc-stat-label">미션</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">1,050</div><div class="cc-stat-label">m²</div></div>
+        </div>
+      </div>
+      <div class="complex-card">
+        <div class="cc-name">타워팰리스 3차</div>
+        <div class="cc-district">강남구 · 습식 1대</div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val" style="color:var(--green)">1</div><div class="cc-stat-label">가동</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">6</div><div class="cc-stat-label">미션</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">440</div><div class="cc-stat-label">m²</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Missions -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">최근 미션</div>
+      <div class="section-link">전체 보기 →</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>로봇</th><th>단지</th><th>구역</th><th>시작</th><th>면적</th><th>커버리지</th><th>상태</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>포레온-W01</strong></td><td>올림픽파크포레온</td><td>B1 주차장 A구역</td>
+            <td style="font-family:var(--mono);font-size:12px">14:10</td><td>142 m²</td>
+            <td><span class="score score-good">94%</span></td>
+            <td><span class="status st-cleaning">진행중</span></td>
+          </tr>
+          <tr>
+            <td><strong>포레온-W03</strong></td><td>올림픽파크포레온</td><td>101동 로비</td>
+            <td style="font-family:var(--mono);font-size:12px">13:45</td><td>180 m²</td>
+            <td><span class="score score-good">98%</span></td>
+            <td><span class="status st-online">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>타팰3-W01</strong></td><td>타워팰리스 3차</td><td>로비</td>
+            <td style="font-family:var(--mono);font-size:12px">13:20</td><td>220 m²</td>
+            <td><span class="score score-good">96%</span></td>
+            <td><span class="status st-online">완료</span></td>
+          </tr>
+          <tr>
+            <td><strong>TheH-D01</strong></td><td>The H 퍼스티어</td><td>커뮤니티센터</td>
+            <td style="font-family:var(--mono);font-size:12px">12:50</td><td>89 m²</td>
+            <td><span class="score score-bad">42%</span></td>
+            <td><span class="status st-error">실패</span></td>
+          </tr>
+          <tr>
+            <td><strong>개포-W01</strong></td><td>개포자이프레지던스</td><td>B1 주차장</td>
+            <td style="font-family:var(--mono);font-size:12px">12:30</td><td>380 m²</td>
+            <td><span class="score score-good">91%</span></td>
+            <td><span class="status st-online">완료</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Incidents -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">미해결 인시던트</div>
+      <div class="section-link">+ 등록</div>
+    </div>
+    <div class="incident-list">
+      <div class="incident-row">
+        <div class="inc-sev sev-high"></div>
+        <div>
+          <div class="inc-title">TheH-D01 미션 중 정지 — 장애물 감지 반복</div>
+          <div class="inc-meta">The H 퍼스티어 · 커뮤니티센터 · 14:05</div>
+        </div>
+        <span class="inc-status is-open">OPEN</span>
+        <span class="status st-error" style="font-size:10px">HIGH</span>
+      </div>
+      <div class="incident-row">
+        <div class="inc-sev sev-medium"></div>
+        <div>
+          <div class="inc-title">포레온-W02 충전 도크 인식 지연 (3회 재시도)</div>
+          <div class="inc-meta">올림픽파크포레온 · B1 충전독 · 11:20</div>
+        </div>
+        <span class="inc-status is-open">OPEN</span>
+        <span class="status st-charging" style="font-size:10px">MEDIUM</span>
+      </div>
+      <div class="incident-row">
+        <div class="inc-sev sev-low"></div>
+        <div>
+          <div class="inc-title">개포-D01 소음 관련 입주민 민원 접수</div>
+          <div class="inc-meta">개포자이프레지던스 · 102동 복도 · 09:15</div>
+        </div>
+        <span class="inc-status is-open">OPEN</span>
+        <span class="status st-offline" style="font-size:10px">LOW</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consumables -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">소모품 잔여수명 (주의 항목)</div>
+      <div class="section-link">전체 보기 →</div>
+    </div>
+    <div class="cons-grid">
+      <div class="cons-card">
+        <div class="cons-head"><div class="cons-name">메인 브러시</div><div class="cons-pct" style="color:var(--red)">12%</div></div>
+        <div class="cons-bar"><div class="cons-fill cf-danger" style="width:12%"></div></div>
+        <div class="cons-robot">TheH-D01 · 교체 임박</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-head"><div class="cons-name">스퀴지 블레이드</div><div class="cons-pct" style="color:var(--amber)">18%</div></div>
+        <div class="cons-bar"><div class="cons-fill cf-warn" style="width:18%"></div></div>
+        <div class="cons-robot">포레온-W03</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-head"><div class="cons-name">사이드 브러시</div><div class="cons-pct" style="color:var(--amber)">24%</div></div>
+        <div class="cons-bar"><div class="cons-fill cf-warn" style="width:24%"></div></div>
+        <div class="cons-robot">포레온-W01</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2 placeholder -->
+  <div class="ph2-banner">
+    <div class="ph2-banner-title">Phase 2에서 추가될 영역</div>
+    <div class="ph2-banner-desc">구역별 상세 뷰 · 배터리/오염도 트렌드 차트 · 청소 커버리지 히트맵 · 입주민 상호작용 분석 · 에너지 소비 비교 · 주간/월간 리포트 · 알림 규칙 엔진 · 권한 세분화</div>
+  </div>
+
+</main>
+</div>
+
+</body>
+</html>
