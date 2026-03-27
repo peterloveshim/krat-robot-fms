@@ -1,8 +1,10 @@
 import { SectionHeader } from "@/components/ui/section-header";
 import { ComplexCard } from "./ComplexCard";
-import { complexes } from "@/lib/mock-data";
+import type { Complex } from "@/lib/mock-data";
 
-export function ComplexGrid() {
+type ComplexGridProps = { complexes: Complex[] };
+
+export function ComplexGrid({ complexes }: ComplexGridProps) {
   return (
     <section className="mb-7">
       <SectionHeader title="단지별 요약" action="전체 보기 →" />

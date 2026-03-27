@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
-import { consumables } from "@/lib/mock-data";
+import type { Consumable } from "@/lib/mock-data";
 
 function getProgressColor(pct: number): string {
   if (pct <= 20) return "bg-krat-red";
@@ -14,7 +14,9 @@ function getPctColor(pct: number): string {
   return "text-krat-green";
 }
 
-export function ConsumableGrid() {
+type ConsumableGridProps = { consumables: Consumable[] };
+
+export function ConsumableGrid({ consumables }: ConsumableGridProps) {
   return (
     <section className="mb-7">
       <SectionHeader title="소모품 현황" action="전체 보기 →" />

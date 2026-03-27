@@ -1,8 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/section-header";
-import { incidents } from "@/lib/mock-data";
-import type { IncidentSeverity, IncidentStatus } from "@/lib/mock-data";
+import type { Incident, IncidentSeverity, IncidentStatus } from "@/lib/mock-data";
 
 function SeverityDot({ severity }: { severity: IncidentSeverity }) {
   const colorMap: Record<IncidentSeverity, string> = {
@@ -72,7 +71,9 @@ function SeverityBadge({ severity }: { severity: IncidentSeverity }) {
   );
 }
 
-export function IncidentList() {
+type IncidentListProps = { incidents: Incident[] };
+
+export function IncidentList({ incidents }: IncidentListProps) {
   return (
     <section className="mb-7">
       <SectionHeader title="인시던트" action="전체 보기 →" />
@@ -88,7 +89,13 @@ export function IncidentList() {
                 <div className="min-w-0">
                   <div className="text-[13px] font-medium truncate">{incident.title}</div>
                   <div className="text-[11px] text-krat-tx3 mt-0.5">
-                    {incident.complexName} · {incident.zoneName} · {incident.occurredAt}
+                    {incident.complexName} · {incident.zoneName} ·{" "}
+                    {new Date(incident.occurredAt).toLocaleString("ko-KR", {
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </div>
                 </div>
                 <IncidentStatusBadge status={incident.status} />

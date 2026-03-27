@@ -1,8 +1,10 @@
 import { SectionHeader } from "@/components/ui/section-header";
 import { RobotCard } from "./RobotCard";
-import { robots } from "@/lib/mock-data";
+import type { Robot } from "@/lib/mock-data";
 
-export function RobotGrid() {
+type RobotGridProps = { robots: Robot[] };
+
+export function RobotGrid({ robots }: RobotGridProps) {
   return (
     <section className="mb-7">
       <SectionHeader title="로봇 현황" action="전체 보기 →" />

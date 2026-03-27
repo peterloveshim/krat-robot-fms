@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { kpiData } from "@/lib/mock-data";
+import type { KpiData } from "@/lib/supabase/queries";
 
 type KpiCardProps = {
   label: string;
@@ -29,38 +29,40 @@ function KpiCard({ label, value, delta, deltaVariant = "neutral" }: KpiCardProps
   );
 }
 
-export function KpiRow() {
+type KpiRowProps = { data: KpiData };
+
+export function KpiRow({ data }: KpiRowProps) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
       <KpiCard
         label="총 로봇"
-        value={kpiData.totalRobots}
+        value={data.totalRobots}
         delta="8개 단지 배치"
         deltaVariant="neutral"
       />
       <KpiCard
         label="가동 중"
-        value={kpiData.operatingRobots}
-        delta={`+${kpiData.operatingRobots - 10}대 전일 대비`}
+        value={data.operatingRobots}
+        delta={`총 ${data.totalRobots}대 중`}
         deltaVariant="up"
       />
       <KpiCard
         label="금일 미션"
-        value={kpiData.todayMissions}
-        delta="+8건 전일 대비"
+        value={data.todayMissions}
+        delta="금일 시작된 미션"
         deltaVariant="up"
       />
       <KpiCard
         label="금일 청소면적"
-        value={`${kpiData.todayAreaM2.toLocaleString()} m²`}
-        delta="+320 m² 전일 대비"
+        value={`${data.todayAreaM2.toLocaleString()} m²`}
+        delta="완료 미션 기준"
         deltaVariant="up"
       />
       <KpiCard
         label="미해결 인시던트"
-        value={kpiData.openIncidents}
-        delta="즉시 확인 필요"
-        deltaVariant="down"
+        value={data.openIncidents}
+        delta={data.openIncidents > 0 ? "즉시 확인 필요" : "이상 없음"}
+        deltaVariant={data.openIncidents > 0 ? "down" : "neutral"}
       />
     </div>
   );

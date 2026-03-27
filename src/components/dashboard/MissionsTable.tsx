@@ -9,8 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScoreBadge } from "@/components/ui/score-badge";
 import { SectionHeader } from "@/components/ui/section-header";
-import { missions } from "@/lib/mock-data";
-import type { MissionStatus } from "@/lib/mock-data";
+import type { Mission, MissionStatus } from "@/lib/mock-data";
 
 function MissionStatusBadge({ status }: { status: MissionStatus }) {
   const config: Record<MissionStatus, { label: string; className: string }> = {
@@ -48,7 +47,9 @@ function MissionStatusBadge({ status }: { status: MissionStatus }) {
   );
 }
 
-export function MissionsTable() {
+type MissionsTableProps = { missions: Mission[] };
+
+export function MissionsTable({ missions }: MissionsTableProps) {
   return (
     <section className="mb-7">
       <SectionHeader title="최근 미션" action="전체 보기 →" />
@@ -82,7 +83,14 @@ export function MissionsTable() {
                   {mission.zoneName}
                 </TableCell>
                 <TableCell className="text-[12px] font-mono text-krat-tx2 py-3">
-                  {mission.startedAt}
+                  {mission.startedAt
+                    ? new Date(mission.startedAt).toLocaleString("ko-KR", {
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "-"}
                 </TableCell>
                 <TableCell className="text-[13px] text-krat-tx2 py-3">
                   {mission.areaCleaned} m²
