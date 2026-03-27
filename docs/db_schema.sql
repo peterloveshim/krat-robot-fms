@@ -1,13 +1,19 @@
 -- ============================================================================
--- 크라트로보틱스 FMS 스키마 v4 — 24개 수집항목 기준 경량화
--- 생성일: 2026-03-25
--- 대상: Supabase (PostgreSQL 15+)
--- 설계원칙: (1) 구역 앵커 유지  (2) 24개 수집항목에 1:1 매핑
---           (3) IP축적+운영필수만 유지  (4) 보안로봇 확장 용이
--- 변경이력: v3(17테이블) → v4(14테이블) / 제거7 + 신규3(IP전용)
+-- 크라트로보틱스 FMS 스키마 v4.1 (db_schema_v2.sql)
+-- 기반: v4 (db_schema.sql)
+-- 수정일: 2026-03-27
+-- 변경사항:
+--   - uuid-ossp 제거 → gen_random_uuid() 사용 (PG 13+ 내장)
+--   - 2026-03 파티션 추가 (telemetry, path_logs)
+--   - RLS 누락 4개 테이블 추가 (zone_maps, consumable_types, operational_insights, user_profiles)
+--   - complexes, zones service_role 정책 추가
+--   - 전체 svc_all 정책에 WITH CHECK (true) 명시
+--   - user_profiles.id → REFERENCES auth.users(id) ON DELETE CASCADE
+--   - user_role ENUM 도입, user_profiles.role 타입 변경
+--   - incidents, operational_insights, user_profiles 인덱스 보완
 -- ============================================================================
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- uuid-ossp 제거: gen_random_uuid()는 PostgreSQL 13+ 내장 함수이므로 확장 불필요
 CREATE EXTENSION IF NOT EXISTS "postgis";
 
 
@@ -54,13 +60,16 @@ CREATE TYPE interaction_type AS ENUM (
     'EMERGENCY_CALL'        -- 긴급 호출
 );
 
+-- [변경] user_role ENUM 도입: VARCHAR(20) 자유형 대신 DB 레벨에서 유효값 강제
+CREATE TYPE user_role AS ENUM ('ADMIN', 'MANAGER', 'OPERATOR', 'VIEWER');
+
 
 -- ============================================================================
 -- 1. complexes — 단지(location)
 -- ============================================================================
 
 CREATE TABLE complexes (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name                VARCHAR(200) NOT NULL,
     address             TEXT,
     district            VARCHAR(50),
@@ -82,7 +91,7 @@ CREATE TABLE complexes (
 -- ============================================================================
 
 CREATE TABLE zones (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     complex_id          UUID NOT NULL REFERENCES complexes(id) ON DELETE CASCADE,
     name                VARCHAR(200) NOT NULL,
     zone_type           zone_type NOT NULL,
@@ -124,7 +133,7 @@ CREATE INDEX idx_zones_complex ON zones(complex_id);
 -- ============================================================================
 
 CREATE TABLE zone_maps (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     zone_id             UUID NOT NULL REFERENCES zones(id) ON DELETE CASCADE,
     robot_category      robot_category NOT NULL,     -- 어떤 로봇의 맵인지
     version             INTEGER NOT NULL DEFAULT 1,
@@ -145,7 +154,7 @@ CREATE UNIQUE INDEX idx_zone_maps_active ON zone_maps(zone_id, robot_category) W
 -- ============================================================================
 
 CREATE TABLE robots (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     serial_number       VARCHAR(100) NOT NULL UNIQUE,
     display_name        VARCHAR(100),
     -- 분류
@@ -189,9 +198,10 @@ CREATE INDEX idx_robots_status ON robots(status);
 
 
 -- ============================================================================
--- 5. telemetry — 통합 텔레메트리
+-- 5. telemetry — 통합 텔레메트리 (월별 파티셔닝)
 --    [라이온스봇#4 오염도패턴, #6 물탱크, #10 운행상태]
 --    [나무엑스#2 본체공기질, #3 분산에어센서, #10 운행상태]
+--    주의: 파티션 테이블은 FK 불가 → robot_id, zone_id 유효성은 앱 레벨에서 검증
 -- ============================================================================
 
 CREATE TABLE telemetry (
@@ -224,7 +234,8 @@ CREATE TABLE telemetry (
     PRIMARY KEY (id, captured_at)
 ) PARTITION BY RANGE (captured_at);
 
--- 2026년 파티션
+-- [변경] 2026-03 파티션 추가 (현재 월 데이터 INSERT 가능하도록)
+CREATE TABLE telemetry_2026_03 PARTITION OF telemetry FOR VALUES FROM ('2026-03-01') TO ('2026-04-01');
 CREATE TABLE telemetry_2026_04 PARTITION OF telemetry FOR VALUES FROM ('2026-04-01') TO ('2026-05-01');
 CREATE TABLE telemetry_2026_05 PARTITION OF telemetry FOR VALUES FROM ('2026-05-01') TO ('2026-06-01');
 CREATE TABLE telemetry_2026_06 PARTITION OF telemetry FOR VALUES FROM ('2026-06-01') TO ('2026-07-01');
@@ -242,12 +253,13 @@ CREATE INDEX idx_telemetry_zone ON telemetry(zone_id, captured_at DESC);
 -- ============================================================================
 -- 6. path_logs — 경로로그 ★IP핵심★ [라이온스봇#3, 나무엑스#6]
 --    SLAM맵과 비교 → 청소 커버리지율 도출
+--    주의: 파티션 테이블은 FK 불가 → robot_id, mission_id, zone_id 유효성은 앱 레벨에서 검증
 -- ============================================================================
 
 CREATE TABLE path_logs (
     id                  BIGSERIAL,
     robot_id            UUID NOT NULL,
-    mission_id          UUID,              -- missions FK (아래 정의)
+    mission_id          UUID,              -- FK 없음 (파티션 테이블 제약) — 앱에서 missions.id 유효성 검증 필수
     captured_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     -- 좌표
     latitude            DECIMAL(10,7) NOT NULL,
@@ -259,7 +271,8 @@ CREATE TABLE path_logs (
     PRIMARY KEY (id, captured_at)
 ) PARTITION BY RANGE (captured_at);
 
--- path_logs 파티션 (telemetry와 동일 구간)
+-- [변경] 2026-03 파티션 추가
+CREATE TABLE path_logs_2026_03 PARTITION OF path_logs FOR VALUES FROM ('2026-03-01') TO ('2026-04-01');
 CREATE TABLE path_logs_2026_04 PARTITION OF path_logs FOR VALUES FROM ('2026-04-01') TO ('2026-05-01');
 CREATE TABLE path_logs_2026_05 PARTITION OF path_logs FOR VALUES FROM ('2026-05-01') TO ('2026-06-01');
 CREATE TABLE path_logs_2026_06 PARTITION OF path_logs FOR VALUES FROM ('2026-06-01') TO ('2026-07-01');
@@ -283,7 +296,7 @@ COMMENT ON TABLE path_logs IS '★IP핵심: 경로로그+좌표. SLAM맵 대비 
 -- ============================================================================
 
 CREATE TABLE missions (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     robot_id            UUID NOT NULL REFERENCES robots(id),
     zone_id             UUID NOT NULL REFERENCES zones(id),
     complex_id          UUID NOT NULL REFERENCES complexes(id),
@@ -328,7 +341,7 @@ CREATE INDEX idx_missions_date ON missions(started_at DESC);
 -- ============================================================================
 
 CREATE TABLE consumable_types (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name                VARCHAR(100) NOT NULL,
     category            VARCHAR(50),       -- BRUSH, FILTER, SQUEEGEE, PAD, HEPA
     applicable_categories robot_category[], -- 적용 가능한 로봇 카테고리
@@ -347,7 +360,7 @@ CREATE TABLE consumable_types (
 -- ============================================================================
 
 CREATE TABLE consumables (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     robot_id            UUID NOT NULL REFERENCES robots(id),
     consumable_type_id  UUID NOT NULL REFERENCES consumable_types(id),
     remaining_pct       DECIMAL(5,2) NOT NULL DEFAULT 100,
@@ -373,7 +386,7 @@ CREATE INDEX idx_consumables_alert ON consumables(is_alert_active) WHERE is_aler
 -- ============================================================================
 
 CREATE TABLE interaction_events (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     robot_id            UUID NOT NULL REFERENCES robots(id),
     zone_id             UUID REFERENCES zones(id),
     complex_id          UUID NOT NULL REFERENCES complexes(id),
@@ -402,10 +415,12 @@ COMMENT ON TABLE interaction_events IS '입주민 상호작용 통합. 미화로
 
 -- ============================================================================
 -- 11. energy_logs — 에너지 소비량 ★IP핵심★ [라이온스봇#12, 나무엑스#12]
+--     주의: UNIQUE (robot_id, log_date) 제약으로 동일 날짜 재INSERT 시 충돌
+--           수집 서버에서 반드시 ON CONFLICT DO UPDATE (UPSERT) 패턴 사용
 -- ============================================================================
 
 CREATE TABLE energy_logs (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     robot_id            UUID NOT NULL REFERENCES robots(id),
     log_date            DATE NOT NULL,
     -- 일별 전력량
@@ -432,7 +447,7 @@ COMMENT ON TABLE energy_logs IS '★IP핵심: 로봇별 일/월 전력소비량.
 -- ============================================================================
 
 CREATE TABLE incidents (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     robot_id            UUID REFERENCES robots(id),
     zone_id             UUID REFERENCES zones(id),
     complex_id          UUID NOT NULL REFERENCES complexes(id),
@@ -458,6 +473,9 @@ CREATE TABLE incidents (
 
 CREATE INDEX idx_incidents_complex ON incidents(complex_id);
 CREATE INDEX idx_incidents_status ON incidents(status);
+-- [변경] robot_id, zone_id 인덱스 추가
+CREATE INDEX idx_incidents_robot ON incidents(robot_id);
+CREATE INDEX idx_incidents_zone ON incidents(zone_id);
 
 
 -- ============================================================================
@@ -465,7 +483,7 @@ CREATE INDEX idx_incidents_status ON incidents(status);
 -- ============================================================================
 
 CREATE TABLE operational_insights (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     complex_id          UUID REFERENCES complexes(id),
     zone_id             UUID REFERENCES zones(id),
     robot_category      robot_category,
@@ -482,21 +500,31 @@ CREATE TABLE operational_insights (
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- [변경] 조회 빈도 높은 컬럼 인덱스 추가
+CREATE INDEX idx_insights_complex ON operational_insights(complex_id);
+CREATE INDEX idx_insights_zone ON operational_insights(zone_id);
+CREATE INDEX idx_insights_category ON operational_insights(robot_category);
+
 
 -- ============================================================================
 -- 14. user_profiles — 사용자/권한
 -- ============================================================================
 
 CREATE TABLE user_profiles (
-    id                  UUID PRIMARY KEY,   -- Supabase Auth UID
+    -- [변경] Supabase Auth와 연동: auth.users 삭제 시 프로필도 CASCADE 삭제
+    id                  UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     email               VARCHAR(200) NOT NULL,
     display_name        VARCHAR(100),
-    role                VARCHAR(20) NOT NULL DEFAULT 'VIEWER',
+    -- [변경] VARCHAR(20) → user_role ENUM (잘못된 역할값 DB 레벨 차단)
+    role                user_role NOT NULL DEFAULT 'VIEWER',
     assigned_complex_ids UUID[],
     phone               VARCHAR(20),
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- [변경] role 기반 필터링 인덱스 추가
+CREATE INDEX idx_user_profiles_role ON user_profiles(role);
 
 
 -- ============================================================================
@@ -549,41 +577,56 @@ CREATE TRIGGER trg_mission_update_robot
 
 
 -- ============================================================================
--- RLS (Supabase 필수)
+-- RLS (Supabase 필수 — 전체 14개 테이블)
 -- ============================================================================
 
-ALTER TABLE complexes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE zones ENABLE ROW LEVEL SECURITY;
-ALTER TABLE robots ENABLE ROW LEVEL SECURITY;
-ALTER TABLE missions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE telemetry ENABLE ROW LEVEL SECURITY;
-ALTER TABLE path_logs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE incidents ENABLE ROW LEVEL SECURITY;
-ALTER TABLE consumables ENABLE ROW LEVEL SECURITY;
-ALTER TABLE interaction_events ENABLE ROW LEVEL SECURITY;
-ALTER TABLE energy_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE complexes             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE zones                 ENABLE ROW LEVEL SECURITY;
+ALTER TABLE zone_maps             ENABLE ROW LEVEL SECURITY;  -- [변경] 추가
+ALTER TABLE robots                ENABLE ROW LEVEL SECURITY;
+ALTER TABLE missions              ENABLE ROW LEVEL SECURITY;
+ALTER TABLE telemetry             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE path_logs             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE incidents             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consumable_types      ENABLE ROW LEVEL SECURITY;  -- [변경] 추가
+ALTER TABLE consumables           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE interaction_events    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE energy_logs           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE operational_insights  ENABLE ROW LEVEL SECURITY;  -- [변경] 추가
+ALTER TABLE user_profiles         ENABLE ROW LEVEL SECURITY;  -- [변경] 추가
 
 -- 인증 사용자 읽기 (Phase 2에서 단지별 세분화)
-CREATE POLICY "auth_read" ON complexes FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON zones FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON robots FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON missions FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON telemetry FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON path_logs FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON incidents FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON consumables FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON interaction_events FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_read" ON energy_logs FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON complexes            FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON zones                FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON zone_maps            FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON robots               FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON missions             FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON telemetry            FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON path_logs            FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON incidents            FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON consumable_types     FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON consumables          FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON interaction_events   FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON energy_logs          FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_read" ON operational_insights FOR SELECT TO authenticated USING (true);
+-- user_profiles: 자신의 레코드만 조회 가능
+CREATE POLICY "auth_read_own" ON user_profiles    FOR SELECT TO authenticated USING (auth.uid() = id);
 
--- service_role 전체 CRUD
-CREATE POLICY "svc_all" ON telemetry FOR ALL TO service_role USING (true);
-CREATE POLICY "svc_all" ON path_logs FOR ALL TO service_role USING (true);
-CREATE POLICY "svc_all" ON robots FOR ALL TO service_role USING (true);
-CREATE POLICY "svc_all" ON missions FOR ALL TO service_role USING (true);
-CREATE POLICY "svc_all" ON incidents FOR ALL TO service_role USING (true);
-CREATE POLICY "svc_all" ON consumables FOR ALL TO service_role USING (true);
-CREATE POLICY "svc_all" ON interaction_events FOR ALL TO service_role USING (true);
-CREATE POLICY "svc_all" ON energy_logs FOR ALL TO service_role USING (true);
+-- service_role 전체 CRUD — [변경] WITH CHECK (true) 명시, complexes/zones 추가
+CREATE POLICY "svc_all" ON complexes            FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON zones               FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON zone_maps           FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON robots              FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON missions            FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON telemetry           FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON path_logs           FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON incidents           FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON consumable_types    FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON consumables         FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON interaction_events  FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON energy_logs         FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON operational_insights FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "svc_all" ON user_profiles       FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- Realtime
 ALTER PUBLICATION supabase_realtime ADD TABLE robots;
@@ -646,12 +689,15 @@ INSERT INTO zones (complex_id, name, zone_type, floor_level, area_m2, floor_mate
 
 
 -- ============================================================================
--- 스키마 요약
+-- 스키마 요약 (v4.1)
 -- ============================================================================
--- 베이스 테이블: 14개 (v3 대비 -3)
--- 파티션: 9개 (telemetry) + 9개 (path_logs) = 18개
--- 수집항목 매핑: 라이온스봇 12개 + 나무엑스 12개 = 24개 전량 매핑
--- 신규 IP 테이블: path_logs(커버리지율), energy_logs(전력효율), interaction_events(상호작용)
--- 제거: charging_docks(robots 흡수), contracts/billing(Phase2), firmware/api_health(제조사관제), daily_stats(쿼리도출)
--- 보안로봇 확장: robot_category ENUM에 SECURITY 포함, interaction_events에 확장 가능
+-- 베이스 테이블: 14개
+-- 파티션: 10개 (telemetry_2026_03~12) + 10개 (path_logs_2026_03~12) = 20개
+-- 변경사항 요약:
+--   - gen_random_uuid() 사용 (uuid-ossp 제거)
+--   - 2026-03 파티션 추가
+--   - RLS 14개 테이블 전체 적용
+--   - service_role 정책 14개 테이블 전체 적용 (WITH CHECK 포함)
+--   - user_profiles: auth.users FK + user_role ENUM
+--   - 인덱스 보완: incidents(robot_id, zone_id), operational_insights(complex_id, zone_id, robot_category), user_profiles(role)
 -- ============================================================================
