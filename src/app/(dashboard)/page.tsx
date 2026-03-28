@@ -1,3 +1,4 @@
+import { AutoRefresh } from "@/components/dashboard/AutoRefresh";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { KpiRow } from "@/components/dashboard/KpiRow";
 import { RobotGrid } from "@/components/dashboard/RobotGrid";
@@ -28,6 +29,7 @@ export default async function DashboardPage() {
 
   return (
     <>
+      <AutoRefresh />
       <PageHeader />
       <KpiRow data={kpiData} />
       <RobotGrid robots={robots} />
