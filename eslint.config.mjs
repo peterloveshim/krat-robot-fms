@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node.js 스크립트 — TypeScript/React 규칙 미적용
+    "scripts/**",
   ]),
 ]);
 
