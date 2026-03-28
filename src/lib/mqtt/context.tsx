@@ -76,14 +76,10 @@ export function MqttProvider({ children, brokerUrl }: MqttProviderProps) {
         console.error("[MQTT] connect 함수를 찾을 수 없습니다.");
         return;
       }
-      // https 환경에서는 wss:// 만 허용되므로 Next.js rewrite 프록시 경로 사용
-      // /mqtt-proxy → next.config.ts rewrite → ws://broker
       const url =
         brokerUrl ??
-        (window.location.protocol === "https:"
-          ? `wss://${window.location.host}/mqtt-proxy`
-          : (process.env.NEXT_PUBLIC_MQTT_BROKER_URL ??
-            "ws://121.124.124.136:9001"));
+        process.env.NEXT_PUBLIC_MQTT_BROKER_URL ??
+        "ws://121.124.124.136:9001";
       const mqttClient = connect(url, {
         username: process.env.NEXT_PUBLIC_MQTT_USERNAME,
         password: process.env.NEXT_PUBLIC_MQTT_PASSWORD,
