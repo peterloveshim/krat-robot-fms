@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { MqttProvider } from "@/lib/mqtt/context";
+import { Toaster } from "sonner";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -31,7 +33,21 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} ${jetbrainsMono.variable} dark`}
     >
       <body className="min-h-screen bg-krat-bg text-krat-tx antialiased">
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <MqttProvider>{children}</MqttProvider>
+        </TooltipProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#3B82F6",
+              color: "#ffffff",
+              border: "1px solid #2563EB",
+              fontFamily: "var(--font-sans)",
+              fontWeight: 600,
+            },
+          }}
+        />
       </body>
     </html>
   );

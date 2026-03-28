@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { MqttStatusIndicator } from "@/components/layout/MqttStatusIndicator";
 import {
   LayoutDashboard,
   Bot,
@@ -109,6 +110,11 @@ function SidebarContent() {
       </nav>
 
       <Separator className="bg-krat-border" />
+
+      {/* MQTT 연결 상태 */}
+      <div className="px-5 py-2">
+        <MqttStatusIndicator />
+      </div>
 
       {/* 사용자 정보 */}
       <div className="px-5 py-4">
