@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { AnimatedValue } from "@/components/ui/animated-value";
 import { MapPin } from "lucide-react";
 import type { Robot } from "@/lib/mock-data";
 
@@ -50,10 +51,8 @@ function StatBox({
 }) {
   return (
     <div className="bg-krat-bg3 rounded-md px-2.5 py-2 text-center">
-      <div
-        className={`text-[15px] font-semibold leading-none ${color ?? "text-krat-tx"}`}
-      >
-        {value}
+      <div className={`text-[15px] font-semibold leading-none ${color ?? "text-krat-tx"}`}>
+        <AnimatedValue value={value} />
       </div>
       <div className="text-[10px] text-krat-tx3 mt-1">{label}</div>
     </div>

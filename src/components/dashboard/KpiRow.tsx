@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { AnimatedValue } from "@/components/ui/animated-value";
 import type { KpiData } from "@/lib/supabase/queries";
 
 type KpiCardProps = {
@@ -21,7 +22,7 @@ function KpiCard({ label, value, delta, deltaVariant = "neutral" }: KpiCardProps
       <CardContent className="px-[18px] py-4">
         <div className="text-[12px] font-medium text-krat-tx3 mb-1.5">{label}</div>
         <div className="text-[26px] font-bold tracking-[-0.03em] text-krat-tx leading-none">
-          {value}
+          <AnimatedValue value={value} />
         </div>
         <div className={`text-[11px] font-medium mt-1 ${deltaColor}`}>{delta}</div>
       </CardContent>

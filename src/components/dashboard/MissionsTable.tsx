@@ -68,10 +68,11 @@ export function MissionsTable({ missions }: MissionsTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {missions.map((mission) => (
+            {missions.map((mission, index) => (
               <TableRow
                 key={mission.id}
-                className="border-krat-border hover:bg-[rgba(255,255,255,0.02)] bg-krat-bg2"
+                className="border-krat-border hover:bg-[rgba(255,255,255,0.02)] bg-krat-bg2 animate-krat-row-in"
+                style={{ animationDelay: `${index * 35}ms` }}
               >
                 <TableCell className="text-[13px] font-semibold py-3">
                   {mission.robotName}

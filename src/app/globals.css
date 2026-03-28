@@ -170,3 +170,43 @@
 .live-dot {
   animation: krat-pulse 2s infinite;
 }
+
+/* 수치 변경 플래시 — 흰색 글로우에서 자연색으로 */
+@keyframes krat-flash {
+  0% {
+    color: #ffffff;
+    text-shadow: 0 0 14px rgba(99, 160, 255, 0.95), 0 0 28px rgba(59, 130, 246, 0.5);
+    transform: scale(1.16);
+  }
+  55% {
+    text-shadow: 0 0 5px rgba(59, 130, 246, 0.2);
+    transform: scale(1);
+  }
+  100% {
+    text-shadow: none;
+  }
+}
+.animate-krat-flash {
+  animation: krat-flash 0.8s ease-out;
+  display: inline-block;
+}
+
+/* 미션 신규 행 슬라이드인 + 좌측 파란 border 페이드 */
+@keyframes krat-row-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px);
+    box-shadow: inset 3px 0 0 #3B82F6;
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: inset 3px 0 0 rgba(59, 130, 246, 0.35);
+  }
+  100% {
+    box-shadow: inset 3px 0 0 rgba(59, 130, 246, 0);
+  }
+}
+.animate-krat-row-in {
+  animation: krat-row-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
