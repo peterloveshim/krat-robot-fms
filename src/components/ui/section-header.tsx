@@ -11,8 +11,11 @@ export function SectionHeader({ title, action, onAction }: SectionHeaderProps): 
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2.5">
-        {/* 강조 바 */}
-        <div className="w-[3px] h-4 rounded-full bg-krat-accent" />
+        {/* 강조 바 — 시안/마젠타 그라디언트 */}
+        <div
+          className="w-[3px] h-4 rounded-full"
+          style={{ background: "linear-gradient(180deg, #00E5FF, #FF006E)" }}
+        />
         <h2 className="text-[15px] font-bold text-krat-tx tracking-[-0.01em]">
           {title}
         </h2>

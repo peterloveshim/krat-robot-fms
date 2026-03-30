@@ -73,7 +73,7 @@ function CoverageBar({ value }: { value: number }): JSX.Element {
 
   return (
     <div className="flex items-center gap-2 min-w-[80px]">
-      <div className="flex-1 h-[3px] bg-krat-bg4 rounded-full overflow-hidden">
+      <div className="flex-1 h-[3px] bg-white/[0.06] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${colorClass}`}
           style={{ width: `${value}%` }}
@@ -90,25 +90,25 @@ const MISSIONS_MAX = 10;
 
 function MissionSkeletonRow(): JSX.Element {
   return (
-    <TableRow className="border-krat-border bg-krat-bg2">
+    <TableRow className="border-white/[0.04] glass-table-row">
       <TableCell className="py-3 px-4">
-        <div className="h-[14px] w-20 rounded bg-krat-bg4 animate-pulse opacity-40" />
+        <div className="h-[14px] w-20 rounded bg-white/[0.04] animate-pulse opacity-40" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[12px] w-24 rounded bg-krat-bg4 animate-pulse opacity-40 mb-1" />
-        <div className="h-[10px] w-16 rounded bg-krat-bg4 animate-pulse opacity-25" />
+        <div className="h-[12px] w-24 rounded bg-white/[0.04] animate-pulse opacity-40 mb-1" />
+        <div className="h-[10px] w-16 rounded bg-white/[0.04] animate-pulse opacity-25" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[12px] w-20 rounded bg-krat-bg4 animate-pulse opacity-40" />
+        <div className="h-[12px] w-20 rounded bg-white/[0.04] animate-pulse opacity-40" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[13px] w-10 rounded bg-krat-bg4 animate-pulse opacity-40" />
+        <div className="h-[13px] w-10 rounded bg-white/[0.04] animate-pulse opacity-40" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[3px] w-full rounded-full bg-krat-bg4 animate-pulse opacity-40" />
+        <div className="h-[3px] w-full rounded-full bg-white/[0.04] animate-pulse opacity-40" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[22px] w-14 rounded-md bg-krat-bg4 animate-pulse opacity-40" />
+        <div className="h-[22px] w-14 rounded-md bg-white/[0.04] animate-pulse opacity-40" />
       </TableCell>
     </TableRow>
   );
@@ -122,10 +122,10 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
   return (
     <section className="h-full flex flex-col">
       <SectionHeader title="최근 미션" action="전체 보기 →" />
-      <div className="flex-1 rounded-lg border border-krat-border overflow-hidden bg-krat-bg2">
+      <div className="flex-1 rounded-xl overflow-hidden glass-table-container">
         <Table>
           <TableHeader>
-            <TableRow className="bg-krat-bg3 hover:bg-krat-bg3 border-krat-border">
+            <TableRow className="glass-table-header hover:bg-white/[0.03] border-white/[0.06]">
               {["로봇", "단지 / 구역", "시작", "면적", "커버리지", "상태"].map((h) => (
                 <TableHead
                   key={h}
@@ -140,7 +140,7 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
             {missions.map((mission, index) => (
               <TableRow
                 key={mission.id}
-                className="border-krat-border hover:bg-krat-bg3/50 bg-krat-bg2 transition-colors animate-krat-row-in group"
+                className="border-white/[0.04] glass-table-row animate-krat-row-in group"
                 style={{ animationDelay: `${index * 35}ms` }}
               >
                 <TableCell className="py-3 px-4">

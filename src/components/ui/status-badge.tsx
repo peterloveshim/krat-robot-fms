@@ -21,11 +21,11 @@ const STATUS_MAP: Record<RobotStatus, StatusConfig> = {
   },
   CHARGING: {
     label: "충전중",
-    className: "bg-[rgba(59,130,246,0.12)] text-krat-accent hover:bg-[rgba(59,130,246,0.12)]",
+    className: "bg-krat-accent/10 text-krat-accent hover:bg-krat-accent/10",
   },
   RETURNING: {
     label: "복귀중",
-    className: "bg-[rgba(59,130,246,0.12)] text-krat-accent hover:bg-[rgba(59,130,246,0.12)]",
+    className: "bg-krat-accent/10 text-krat-accent hover:bg-krat-accent/10",
   },
   ERROR: {
     label: "에러",
@@ -33,7 +33,7 @@ const STATUS_MAP: Record<RobotStatus, StatusConfig> = {
   },
   OFFLINE: {
     label: "오프라인",
-    className: "bg-[rgba(255,255,255,0.06)] text-krat-tx3 hover:bg-[rgba(255,255,255,0.06)]",
+    className: "bg-white/[0.04] text-krat-tx3 hover:bg-white/[0.04]",
   },
   MANUAL: {
     label: "수동",

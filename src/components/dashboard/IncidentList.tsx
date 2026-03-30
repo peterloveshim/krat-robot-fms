@@ -34,7 +34,7 @@ function SeverityIcon({ severity }: { severity: IncidentSeverity }): JSX.Element
       severity === "CRITICAL" ? "bg-krat-red-bg" :
       severity === "HIGH" ? "bg-krat-amber-bg" :
       severity === "MEDIUM" ? "bg-krat-accent/10" :
-      "bg-krat-bg4"
+      "bg-white/[0.04]"
     }`}>
       <AlertTriangle size={14} className={colorMap[severity]} />
       {isCritical && (
@@ -69,7 +69,7 @@ function IncidentStatusBadge({ status }: { status: IncidentStatus }): JSX.Elemen
     },
     CLOSED: {
       label: "종료",
-      className: "bg-krat-bg4 text-krat-tx3 hover:bg-krat-bg4",
+      className: "bg-white/[0.04] text-krat-tx3 hover:bg-white/[0.04]",
       icon: null,
     },
   };
@@ -101,16 +101,16 @@ const INCIDENTS_MAX = 6;
 
 function IncidentSkeletonItem(): JSX.Element {
   return (
-    <div className="relative bg-krat-bg2 border border-krat-border rounded-lg overflow-hidden">
-      <div className="absolute left-0 top-0 w-[3px] h-full bg-krat-bg4 opacity-40" />
+    <div className="relative glass-card rounded-xl overflow-hidden">
+      <div className="absolute left-0 top-0 w-[3px] h-full bg-white/[0.04] opacity-40" />
       <div className="pl-5 pr-4 py-3.5 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-krat-bg4 animate-pulse opacity-40 flex-shrink-0" />
+        <div className="w-8 h-8 rounded-lg bg-white/[0.04] animate-pulse opacity-40 flex-shrink-0" />
         <div className="flex-1 min-w-0 space-y-1.5">
-          <div className="h-[9px] w-16 rounded bg-krat-bg4 animate-pulse opacity-40" />
-          <div className="h-[13px] w-36 rounded bg-krat-bg4 animate-pulse opacity-40" />
-          <div className="h-[11px] w-24 rounded bg-krat-bg4 animate-pulse opacity-25" />
+          <div className="h-[9px] w-16 rounded bg-white/[0.04] animate-pulse opacity-40" />
+          <div className="h-[13px] w-36 rounded bg-white/[0.04] animate-pulse opacity-40" />
+          <div className="h-[11px] w-24 rounded bg-white/[0.04] animate-pulse opacity-25" />
         </div>
-        <div className="h-[20px] w-14 rounded-md bg-krat-bg4 animate-pulse opacity-40 flex-shrink-0" />
+        <div className="h-[20px] w-14 rounded-md bg-white/[0.04] animate-pulse opacity-40 flex-shrink-0" />
       </div>
     </div>
   );
@@ -129,7 +129,7 @@ export function IncidentList({ incidents }: IncidentListProps): JSX.Element {
         {shown.map((incident) => (
           <div
             key={incident.id}
-            className="group relative bg-krat-bg2 border border-krat-border rounded-lg overflow-hidden hover:border-krat-accent/20 transition-all duration-300"
+            className="group relative glass-card rounded-xl overflow-hidden transition-all duration-300"
           >
             {/* 좌측 심각도 바 */}
             <div className={`absolute left-0 top-0 w-[3px] h-full ${getSeverityBarClass(incident.severity)}`} />

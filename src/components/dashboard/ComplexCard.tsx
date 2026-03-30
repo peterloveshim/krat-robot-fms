@@ -19,7 +19,7 @@ function MiniDonut({
   const total = operating + charging + error;
   if (total === 0) {
     return (
-      <div className="w-10 h-10 rounded-full border-2 border-krat-bg4 flex items-center justify-center">
+      <div className="w-10 h-10 rounded-full border-2 border-white/[0.08] flex items-center justify-center">
         <span className="text-[9px] text-krat-tx3">0</span>
       </div>
     );
@@ -28,7 +28,6 @@ function MiniDonut({
   // conic-gradient 각도 계산
   const opDeg = (operating / total) * 360;
   const chDeg = (charging / total) * 360;
-  // error는 나머지
 
   return (
     <div
@@ -37,12 +36,19 @@ function MiniDonut({
         background: `conic-gradient(
           var(--krat-green) 0deg ${opDeg}deg,
           var(--krat-accent) ${opDeg}deg ${opDeg + chDeg}deg,
-          ${error > 0 ? "var(--krat-red)" : "var(--krat-bg4)"} ${opDeg + chDeg}deg 360deg
+          ${error > 0 ? "var(--krat-red)" : "rgba(255,255,255,0.06)"} ${opDeg + chDeg}deg 360deg
         )`,
       }}
     >
-      {/* 도넛 중앙 구멍 */}
-      <div className="absolute inset-[3px] rounded-full bg-krat-bg2 flex items-center justify-center">
+      {/* 도넛 중앙 구멍 — glass 효과로 뒷배경 비침 */}
+      <div
+        className="absolute inset-[3px] rounded-full flex items-center justify-center"
+        style={{
+          background: "rgba(4, 8, 18, 0.7)",
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+        }}
+      >
         <span className="text-[11px] font-bold text-krat-tx tabular-nums">{total}</span>
       </div>
     </div>
@@ -75,12 +81,18 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
 
   return (
     <div
-      className={`group relative bg-krat-bg2 border rounded-lg p-4 transition-all duration-300 overflow-hidden ${
-        hasError
-          ? "border-krat-red/20 hover:border-krat-red/40"
-          : "border-krat-border hover:border-krat-accent/30"
+      className={`group relative glass-card rounded-xl p-4 transition-all duration-300 overflow-hidden ${
+        hasError ? "glow-red" : ""
       }`}
     >
+      {/* 에러 시 상단 경고 바 */}
+      {hasError && (
+        <div
+          className="absolute top-0 left-0 right-0 h-[1px]"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255, 59, 92, 0.5), transparent)" }}
+        />
+      )}
+
       {/* 상단: 단지명 + 도넛 */}
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="min-w-0 flex-1">
@@ -105,7 +117,7 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
       </div>
 
       {/* 상태 분류 */}
-      <div className="flex flex-col gap-1.5 pt-3 border-t border-krat-border">
+      <div className="flex flex-col gap-1.5 pt-3 border-t border-white/[0.06]">
         <StatusDot
           count={complex.robots.operating}
           label="가동"

@@ -97,7 +97,13 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
     <div className="flex flex-col h-full">
       {/* 로고 */}
       <div className="flex items-center gap-3 px-5 py-6">
-        <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-krat-accent to-krat-accent2 flex items-center justify-center text-white text-sm font-extrabold flex-shrink-0 shadow-lg shadow-krat-accent/20">
+        <div
+          className="relative w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-extrabold flex-shrink-0"
+          style={{
+            background: "linear-gradient(135deg, #00E5FF, #FF006E)",
+            boxShadow: "0 4px 20px rgba(0, 229, 255, 0.25)",
+          }}
+        >
           K
         </div>
         <div>
@@ -106,7 +112,7 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
         </div>
       </div>
 
-      <Separator className="bg-krat-border mb-1" />
+      <Separator className="bg-white/5 mb-1" />
 
       {/* 네비게이션 */}
       <nav className="flex-1 overflow-y-auto px-3">
@@ -122,17 +128,20 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
         ))}
       </nav>
 
-      <Separator className="bg-krat-border" />
+      <Separator className="bg-white/5" />
 
       {/* MQTT 연결 상태 */}
       <div className="px-5 py-2">
         <MqttStatusIndicator />
       </div>
 
-      {/* 사용자 정보 + 로그아웃 */}
+      {/* 사용자 정보 + 로그아웃 — glass 처리 */}
       <div className="px-4 py-4">
-        <div className="flex items-center gap-2.5 p-2 rounded-lg bg-krat-bg2 border border-krat-border">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-krat-accent to-krat-purple flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0">
+        <div className="flex items-center gap-2.5 p-2 rounded-lg glass-card">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0"
+            style={{ background: "linear-gradient(135deg, #00E5FF, #A855F7)" }}
+          >
             {avatarInitial}
           </div>
           <div className="flex-1 min-w-0">
@@ -176,13 +185,16 @@ function NavItemButton({ item }: { item: NavItem }): JSX.Element {
       href={item.href}
       className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 ${
         isActive
-          ? "bg-krat-accent/12 text-krat-accent font-semibold"
-          : "text-krat-tx2 hover:bg-krat-bg3 hover:text-krat-tx"
+          ? "bg-krat-accent/10 text-krat-accent font-semibold"
+          : "text-krat-tx2 hover:bg-white/[0.04] hover:text-krat-tx"
       }`}
     >
       {/* Active 인디케이터 — 좌측 바 */}
       {isActive && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-krat-accent" />
+        <div
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-krat-accent"
+          style={{ boxShadow: "0 0 8px rgba(0, 229, 255, 0.5)" }}
+        />
       )}
 
       <span className={`flex-shrink-0 transition-colors ${isActive ? "text-krat-accent" : "text-krat-tx3"}`}>
@@ -213,7 +225,7 @@ type SidebarProps = {
   user: User;
 };
 
-// 모바일 햄버거 포함 래퍼
+// 모바일 햄버거 포함 래퍼 — glass 사이드바
 export function Sidebar({ user }: SidebarProps): JSX.Element {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -221,15 +233,15 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
     <>
       {/* 모바일 햄버거 버튼 */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 w-9 h-9 rounded-lg bg-krat-bg2 border border-krat-border flex items-center justify-center text-krat-tx2 hover:text-krat-tx transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 w-9 h-9 rounded-lg glass-card flex items-center justify-center text-krat-tx2 hover:text-krat-tx transition-colors"
         onClick={() => setMobileOpen(true)}
         aria-label="메뉴 열기"
       >
         <Menu size={18} />
       </button>
 
-      {/* 데스크톱 사이드바 */}
-      <aside className="hidden lg:flex flex-col w-[230px] h-screen sticky top-0 bg-krat-bg border-r border-krat-border flex-shrink-0">
+      {/* 데스크톱 사이드바 — glass-heavy 적용 */}
+      <aside className="hidden lg:flex flex-col w-[230px] h-screen sticky top-0 glass-heavy flex-shrink-0">
         <SidebarContent user={user} />
       </aside>
 
@@ -240,7 +252,7 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="relative w-[230px] h-full bg-krat-bg border-r border-krat-border flex flex-col z-50">
+          <aside className="relative w-[230px] h-full glass-heavy flex flex-col z-50">
             <button
               className="absolute top-4 right-4 text-krat-tx3 hover:text-krat-tx transition-colors"
               onClick={() => setMobileOpen(false)}

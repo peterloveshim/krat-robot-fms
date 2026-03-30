@@ -11,7 +11,7 @@ type RobotCardProps = {
   robot: Robot;
 };
 
-/** 로봇 타입별 아이콘 — 하드웨어 다이어그램 느낌 */
+/** 로봇 타입별 아이콘 — glass 내부 인디케이터 */
 function RobotTypeIndicator({ subtype, status }: { subtype: Robot["subtype"]; status: Robot["status"] }): JSX.Element {
   const isWet = subtype === "WET_SCRUB";
   const isNamux = subtype === "NAMUX";
@@ -41,11 +41,11 @@ function RobotTypeIndicator({ subtype, status }: { subtype: Robot["subtype"]; st
   const isActive = status === "WORKING" || status === "ONLINE" || status === "RETURNING";
 
   return (
-    <div className={`relative w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0 border ${bgClass} ${textClass} ${borderClass}`}>
+    <div className={`relative w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 border ${bgClass} ${textClass} ${borderClass}`}>
       {label}
       {/* 활성 상태 펄스 */}
       {isActive && (
-        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-krat-green border-2 border-krat-bg2">
+        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-krat-green border-2 border-krat-bg">
           <span className="absolute inset-0 rounded-full bg-krat-green animate-ping opacity-40" />
         </span>
       )}
@@ -53,13 +53,13 @@ function RobotTypeIndicator({ subtype, status }: { subtype: Robot["subtype"]; st
   );
 }
 
-/** 세그먼트형 배터리 바 — 하드웨어 게이지 느낌 */
+/** 세그먼트형 배터리 바 — glass 내부 게이지 */
 function BatteryGauge({ pct }: { pct: number }): JSX.Element {
   const segments = 10;
   const filled = Math.round((pct / 100) * segments);
 
   const getSegmentColor = (index: number): string => {
-    if (index >= filled) return "bg-krat-bg4";
+    if (index >= filled) return "bg-white/[0.04]";
     if (pct >= 50) return "bg-krat-green";
     if (pct >= 20) return "bg-krat-amber";
     return "bg-krat-red";
@@ -106,36 +106,40 @@ function DataPoint({
   );
 }
 
-function getStatusBorderClass(status: Robot["status"]): string {
+function getGlowClass(status: Robot["status"]): string {
   switch (status) {
     case "ERROR":
-      return "border-krat-red/30 hover:border-krat-red/50";
+      return "glow-red";
     case "WORKING":
-      return "border-krat-purple/20 hover:border-krat-purple/40";
+      return "glow-purple";
     case "CHARGING":
-      return "border-krat-accent/20 hover:border-krat-accent/40";
+      return "glow-cyan";
+    case "ONLINE":
+    case "RETURNING":
+      return "glow-green";
     default:
-      return "border-krat-border hover:border-krat-accent/30";
+      return "";
   }
 }
 
 export function RobotCard({ robot }: RobotCardProps): JSX.Element {
   const isCleaning = robot.category === "CLEANING";
   const isWet = robot.subtype === "WET_SCRUB";
-  const borderClass = getStatusBorderClass(robot.status);
   const isError = robot.status === "ERROR";
+  const glowClass = getGlowClass(robot.status);
 
   return (
     <Tooltip>
       <TooltipTrigger>
         <div
-          className={`group relative bg-krat-bg2 border rounded-lg cursor-pointer transition-all duration-300 text-left w-full overflow-hidden ${borderClass} ${
-            isError ? "shadow-[0_0_20px_rgba(239,68,68,0.08)]" : ""
-          }`}
+          className={`group relative glass-card rounded-xl cursor-pointer transition-all duration-300 text-left w-full overflow-hidden ${glowClass}`}
         >
-          {/* 에러 상태 — 상단 경고 바 */}
+          {/* 에러 상태 — 상단 경고 바 (마젠타-레드 그라디언트) */}
           {isError && (
-            <div className="h-[2px] bg-gradient-to-r from-krat-red via-krat-red/60 to-transparent" />
+            <div
+              className="h-[2px]"
+              style={{ background: "linear-gradient(90deg, #FF3B5C, rgba(255, 0, 110, 0.6), transparent)" }}
+            />
           )}
 
           <div className="p-4">
@@ -158,8 +162,8 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
               <BatteryGauge pct={robot.batteryPct} />
             </div>
 
-            {/* 데이터 포인트 — 수평 배치 */}
-            <div className="flex items-start gap-4 py-2 px-2 bg-krat-bg3/50 rounded-md mb-3">
+            {/* 데이터 포인트 — glass 내부 패널 */}
+            <div className="flex items-start gap-4 py-2 px-2 bg-white/2 rounded-lg mb-3 border border-white/4">
               {isCleaning && isWet ? (
                 <>
                   <DataPoint
@@ -167,7 +171,7 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
                     label="청수"
                     color="text-krat-accent"
                   />
-                  <div className="w-px h-6 bg-krat-border self-center" />
+                  <div className="w-px h-6 bg-white/8 self-center" />
                   <DataPoint
                     value={`${robot.dirtyWaterPct ?? 0}%`}
                     label="오수"
@@ -179,7 +183,7 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
                   />
                   {robot.coveragePct !== undefined && (
                     <>
-                      <div className="w-px h-6 bg-krat-border self-center" />
+                      <div className="w-px h-6 bg-white/8 self-center" />
                       <DataPoint
                         value={`${robot.coveragePct}%`}
                         label="커버리지"
@@ -207,13 +211,13 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
                           : "text-krat-red"
                     }
                   />
-                  <div className="w-px h-6 bg-krat-border self-center" />
+                  <div className="w-px h-6 bg-white/8 self-center" />
                   <DataPoint value={robot.firmwareVersion} label="펌웨어" />
                 </>
               ) : (
                 <>
                   <DataPoint value={robot.firmwareVersion} label="펌웨어" />
-                  <div className="w-px h-6 bg-krat-border self-center" />
+                  <div className="w-px h-6 bg-white/8 self-center" />
                   <DataPoint value="-" label="미션 없음" />
                 </>
               )}
@@ -221,18 +225,18 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
 
             {/* 위치 — 하단 */}
             <div className="flex items-center gap-1.5 text-[11px] text-krat-tx3">
-              <MapPin size={11} className="flex-shrink-0" />
+              <MapPin size={11} className="shrink-0" />
               <span className="truncate">
                 {robot.complexName} · {robot.zoneName}
               </span>
-              <Wifi size={10} className="ml-auto flex-shrink-0 text-krat-green opacity-50" />
+              <Wifi size={10} className="ml-auto shrink-0 text-krat-green opacity-50" />
             </div>
           </div>
         </div>
       </TooltipTrigger>
       <TooltipContent
         side="top"
-        className="bg-krat-bg3 border-krat-border text-krat-tx2 text-xs"
+        className="glass-panel rounded-lg text-krat-tx2 text-xs"
       >
         <p>{robot.manufacturer} · {robot.model}</p>
         <p className="font-mono text-krat-tx3">{robot.firmwareVersion}</p>

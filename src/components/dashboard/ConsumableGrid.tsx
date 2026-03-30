@@ -16,7 +16,7 @@ function getUrgencyConfig(pct: number): { label: string; textClass: string; bgCl
   if (pct <= 25) {
     return { label: "교체 임박", textClass: "text-krat-amber", bgClass: "bg-krat-amber-bg" };
   }
-  return { label: "교체 예정", textClass: "text-krat-tx3", bgClass: "bg-krat-bg4" };
+  return { label: "교체 예정", textClass: "text-krat-tx3", bgClass: "bg-white/[0.04]" };
 }
 
 type ConsumableGridProps = { consumables: Consumable[] };
@@ -33,15 +33,16 @@ export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Elemen
           return (
             <div
               key={item.id}
-              className={`group relative bg-krat-bg2 border rounded-lg overflow-hidden transition-all duration-300 ${
-                isCritical
-                  ? "border-krat-red/20 hover:border-krat-red/40"
-                  : "border-krat-border hover:border-krat-accent/20"
+              className={`group relative glass-card rounded-xl overflow-hidden transition-all duration-300 ${
+                isCritical ? "glow-red" : ""
               }`}
             >
               {/* 상단 긴급도 바 — critical일 때만 표시 */}
               {isCritical && (
-                <div className="h-[2px] bg-gradient-to-r from-krat-red via-krat-red/60 to-transparent" />
+                <div
+                  className="h-[2px]"
+                  style={{ background: "linear-gradient(90deg, #FF3B5C, rgba(255, 0, 110, 0.6), transparent)" }}
+                />
               )}
 
               <div className="p-4">
@@ -49,7 +50,7 @@ export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Elemen
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2.5">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      isCritical ? "bg-krat-red-bg" : "bg-krat-bg4"
+                      isCritical ? "bg-krat-red-bg" : "bg-white/[0.04]"
                     }`}>
                       {isCritical ? (
                         <AlertTriangle size={14} className="text-krat-red" />
@@ -71,7 +72,7 @@ export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Elemen
                   </span>
                 </div>
 
-                {/* 프로그레스 바 — 세그먼트형 */}
+                {/* 프로그레스 바 */}
                 <div className="mb-2">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] text-krat-tx3 uppercase tracking-wider font-medium">
@@ -87,7 +88,7 @@ export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Elemen
                       {item.remainingPct}%
                     </span>
                   </div>
-                  <div className="relative h-2 w-full overflow-hidden rounded-full bg-krat-bg4">
+                  <div className="relative h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${getProgressColor(item.remainingPct)}`}
                       style={{ width: `${item.remainingPct}%` }}
@@ -96,7 +97,7 @@ export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Elemen
                 </div>
 
                 {/* 알림 메시지 */}
-                <div className="text-[11px] text-krat-tx3 pt-2 border-t border-krat-border">
+                <div className="text-[11px] text-krat-tx3 pt-2 border-t border-white/[0.06]">
                   {item.alertMessage}
                 </div>
               </div>
