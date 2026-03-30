@@ -1,17 +1,88 @@
-export function PageHeader() {
+"use client";
+
+import type { JSX } from "react";
+import { useEffect, useState } from "react";
+import { Activity, Radio } from "lucide-react";
+
+function LiveClock(): JSX.Element {
+  const [time, setTime] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+
+  useEffect(() => {
+    function update(): void {
+      const now = new Date();
+      setTime(
+        now.toLocaleTimeString("ko-KR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        })
+      );
+      setDate(
+        now.toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          weekday: "short",
+        })
+      );
+    }
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <div className="flex items-start justify-between mb-6 gap-4">
-      <div>
-        <h1 className="text-[22px] font-bold tracking-[-0.03em] text-krat-tx">
-          대시보드
-        </h1>
-        <p className="text-[13px] text-krat-tx2 mt-0.5">
-          크라트로보틱스 FMS — 8개 단지 15대 로봇
-        </p>
+    <div className="flex items-center gap-3">
+      {/* 타임스탬프 블록 */}
+      <div className="text-right">
+        <div className="text-[11px] text-krat-tx3 font-medium tracking-wide">
+          {date}
+        </div>
+        <div className="text-[18px] font-mono font-bold text-krat-tx tracking-wider leading-tight tabular-nums">
+          {time}
+        </div>
       </div>
-      <div className="flex items-center gap-2 font-mono text-[12px] text-krat-tx3 bg-krat-bg3 px-3 py-1.5 rounded-lg flex-shrink-0">
-        <span className="live-dot inline-block w-1.5 h-1.5 rounded-full bg-krat-green" />
-        LIVE · 2026-03-27 14:32 KST
+      {/* LIVE 인디케이터 */}
+      <div className="flex flex-col items-center gap-1 pl-3 border-l border-krat-border">
+        <div className="relative">
+          <span className="live-dot block w-2 h-2 rounded-full bg-krat-green" />
+          <span className="absolute inset-0 rounded-full bg-krat-green opacity-40 animate-ping" />
+        </div>
+        <span className="text-[9px] font-bold tracking-[0.15em] text-krat-green uppercase">
+          live
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export function PageHeader(): JSX.Element {
+  return (
+    <div className="flex items-end justify-between mb-8 gap-4">
+      {/* 좌측 — 타이틀 블록 */}
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <Activity size={14} className="text-krat-accent" />
+          <span className="text-[10px] font-bold tracking-[0.2em] text-krat-accent uppercase">
+            Fleet Management System
+          </span>
+        </div>
+        <h1 className="text-[28px] font-extrabold tracking-[-0.04em] text-krat-tx leading-none">
+          통합 관제 대시보드
+        </h1>
+        <div className="flex items-center gap-2 mt-2">
+          <Radio size={12} className="text-krat-tx3" />
+          <p className="text-[12px] text-krat-tx3">
+            8개 단지 · 15대 로봇 실시간 모니터링
+          </p>
+        </div>
+      </div>
+
+      {/* 우측 — 시계 + 상태 */}
+      <div className="flex-shrink-0 bg-krat-bg2 border border-krat-border rounded-lg px-4 py-2.5">
+        <LiveClock />
       </div>
     </div>
   );

@@ -212,7 +212,7 @@ export async function fetchOpenIncidents(): Promise<Incident[]> {
     )
     .in("status", ["OPEN", "INVESTIGATING"])
     .order("occurred_at", { ascending: false })
-    .limit(10);
+    .limit(6);
 
   if (error) throw error;
 

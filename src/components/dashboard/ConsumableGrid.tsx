@@ -1,5 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
+import type { JSX } from "react";
 import { SectionHeader } from "@/components/ui/section-header";
+import { AlertTriangle, Wrench } from "lucide-react";
 import type { Consumable } from "@/lib/mock-data";
 
 function getProgressColor(pct: number): string {
@@ -8,44 +9,100 @@ function getProgressColor(pct: number): string {
   return "bg-krat-green";
 }
 
-function getPctColor(pct: number): string {
-  if (pct <= 20) return "text-krat-red";
-  if (pct <= 30) return "text-krat-amber";
-  return "text-krat-green";
+function getUrgencyConfig(pct: number): { label: string; textClass: string; bgClass: string } {
+  if (pct <= 15) {
+    return { label: "즉시 교체", textClass: "text-krat-red", bgClass: "bg-krat-red-bg" };
+  }
+  if (pct <= 25) {
+    return { label: "교체 임박", textClass: "text-krat-amber", bgClass: "bg-krat-amber-bg" };
+  }
+  return { label: "교체 예정", textClass: "text-krat-tx3", bgClass: "bg-krat-bg4" };
 }
 
 type ConsumableGridProps = { consumables: Consumable[] };
 
-export function ConsumableGrid({ consumables }: ConsumableGridProps) {
+export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Element {
   return (
-    <section className="mb-7">
+    <section>
       <SectionHeader title="소모품 현황" action="전체 보기 →" />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {consumables.map((item) => (
-          <Card
-            key={item.id}
-            className="bg-krat-bg2 border-krat-border rounded-krat shadow-none"
-          >
-            <CardContent className="px-4 py-3.5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[13px] font-medium">{item.name}</span>
-                <span className={`text-[13px] font-semibold font-mono ${getPctColor(item.remainingPct)}`}>
-                  {item.remainingPct}%
-                </span>
+        {consumables.map((item) => {
+          const urgency = getUrgencyConfig(item.remainingPct);
+          const isCritical = item.remainingPct <= 15;
+
+          return (
+            <div
+              key={item.id}
+              className={`group relative bg-krat-bg2 border rounded-lg overflow-hidden transition-all duration-300 ${
+                isCritical
+                  ? "border-krat-red/20 hover:border-krat-red/40"
+                  : "border-krat-border hover:border-krat-accent/20"
+              }`}
+            >
+              {/* 상단 긴급도 바 — critical일 때만 표시 */}
+              {isCritical && (
+                <div className="h-[2px] bg-gradient-to-r from-krat-red via-krat-red/60 to-transparent" />
+              )}
+
+              <div className="p-4">
+                {/* 헤더: 아이콘 + 이름 + 긴급도 라벨 */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      isCritical ? "bg-krat-red-bg" : "bg-krat-bg4"
+                    }`}>
+                      {isCritical ? (
+                        <AlertTriangle size={14} className="text-krat-red" />
+                      ) : (
+                        <Wrench size={14} className="text-krat-tx3" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-[13px] font-bold text-krat-tx">
+                        {item.name}
+                      </div>
+                      <div className="text-[10px] text-krat-tx3">
+                        {item.robotName}
+                      </div>
+                    </div>
+                  </div>
+                  <span className={`text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md ${urgency.textClass} ${urgency.bgClass}`}>
+                    {urgency.label}
+                  </span>
+                </div>
+
+                {/* 프로그레스 바 — 세그먼트형 */}
+                <div className="mb-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] text-krat-tx3 uppercase tracking-wider font-medium">
+                      잔량
+                    </span>
+                    <span className={`text-[16px] font-extrabold font-mono tabular-nums ${
+                      item.remainingPct <= 20
+                        ? "text-krat-red"
+                        : item.remainingPct <= 30
+                          ? "text-krat-amber"
+                          : "text-krat-green"
+                    }`}>
+                      {item.remainingPct}%
+                    </span>
+                  </div>
+                  <div className="relative h-2 w-full overflow-hidden rounded-full bg-krat-bg4">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${getProgressColor(item.remainingPct)}`}
+                      style={{ width: `${item.remainingPct}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* 알림 메시지 */}
+                <div className="text-[11px] text-krat-tx3 pt-2 border-t border-krat-border">
+                  {item.alertMessage}
+                </div>
               </div>
-              {/* shadcn Progress + 커스텀 색상 오버라이드 */}
-              <div className="relative h-1 w-full overflow-hidden rounded-full bg-krat-bg4">
-                <div
-                  className={`h-full rounded-full transition-all ${getProgressColor(item.remainingPct)}`}
-                  style={{ width: `${item.remainingPct}%` }}
-                />
-              </div>
-              <div className="text-[11px] text-krat-tx3 mt-1.5">
-                {item.robotName} · {item.alertMessage}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
