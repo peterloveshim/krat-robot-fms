@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MqttStatusIndicator } from "@/components/layout/MqttStatusIndicator";
+import { signOut } from "@/lib/auth/actions";
 import {
   LayoutDashboard,
   Bot,
@@ -19,6 +21,7 @@ import {
   Settings,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 
 type NavItem = {
@@ -79,7 +82,15 @@ const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
   },
 ];
 
-function SidebarContent() {
+function SidebarContent({ user }: { user: User }) {
+  // full_name 메타데이터 → 이메일 prefix → "사용자" 순으로 폴백
+  const displayName =
+    (user.user_metadata?.full_name as string | undefined) ??
+    user.email?.split("@")[0] ??
+    "사용자";
+  const avatarInitial = displayName.charAt(0).toUpperCase();
+  const role = (user.user_metadata?.role as string | undefined) ?? "USER";
+
   return (
     <div className="flex flex-col h-full">
       {/* 로고 */}
@@ -116,16 +127,26 @@ function SidebarContent() {
         <MqttStatusIndicator />
       </div>
 
-      {/* 사용자 정보 */}
+      {/* 사용자 정보 + 로그아웃 */}
       <div className="px-5 py-4">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-krat-accent to-krat-purple flex items-center justify-center text-white text-[12px] font-semibold flex-shrink-0">
-            강
+            {avatarInitial}
           </div>
-          <div>
-            <div className="text-[13px] font-medium">강민수</div>
-            <div className="text-[11px] text-krat-tx3">ADMIN</div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-medium truncate">{displayName}</div>
+            <div className="text-[11px] text-krat-tx3">{role}</div>
           </div>
+          {/* 로그아웃 버튼 — Server Action 직접 연결 */}
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-krat-tx3 hover:text-krat-red hover:bg-krat-red-bg transition-colors flex-shrink-0"
+              title="로그아웃"
+            >
+              <LogOut size={14} />
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -176,8 +197,12 @@ function NavItemButton({ item }: { item: NavItem }) {
   );
 }
 
+type SidebarProps = {
+  user: User;
+};
+
 // 모바일 햄버거 포함 래퍼
-export function Sidebar() {
+export function Sidebar({ user }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -193,7 +218,7 @@ export function Sidebar() {
 
       {/* 데스크톱 사이드바 */}
       <aside className="hidden lg:flex flex-col w-[220px] h-screen sticky top-0 bg-krat-bg border-r border-krat-border flex-shrink-0">
-        <SidebarContent />
+        <SidebarContent user={user} />
       </aside>
 
       {/* 모바일 오버레이 */}
@@ -211,7 +236,7 @@ export function Sidebar() {
             >
               <X size={18} />
             </button>
-            <SidebarContent />
+            <SidebarContent user={user} />
           </aside>
         </div>
       )}
