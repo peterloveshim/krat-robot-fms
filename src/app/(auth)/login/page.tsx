@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useActionState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +17,7 @@ const CALLBACK_ERRORS: Record<string, string> = {
     "이메일 인증 링크가 만료되었거나 올바르지 않습니다. 다시 시도해주세요.",
 };
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
   const callbackError = searchParams.get("error");
 
@@ -26,10 +27,6 @@ export default function LoginPage() {
     register,
     formState: { errors },
   } = useForm<LoginFormValues>({
-    defaultValues: {
-      email: "test@gmail.com",
-      password: "qwer1234",
-    },
     resolver: zodResolver(loginSchema),
   });
 
@@ -103,5 +100,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

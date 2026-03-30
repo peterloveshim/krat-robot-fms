@@ -9,7 +9,7 @@ const PUBLIC_PATHS = [
   "/auth/callback",
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   // 세션 갱신: 만료된 Access Token을 Refresh Token으로 자동 갱신
