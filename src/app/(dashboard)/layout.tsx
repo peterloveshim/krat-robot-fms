@@ -19,7 +19,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="relative flex min-h-screen bg-krat-bg overflow-hidden">
+    <div className="relative flex h-screen bg-krat-bg overflow-hidden">
       <SensorTemperatureListener />
 
       {/* 배경 오브 — 네뷸라 레이어 (더 크고 선명하게) */}
