@@ -230,3 +230,4 @@ await supabase
 - [**IMPORTANT**] 보안 이슈가 있는 경우 매번 확인을 요청할 것
 - [**IMPORTANT**] Phase1 까지만 개발할 것
 - [**IMPORTANT**] 새로운 페이지나 컴포넌트 생성을 할 경우 `docs/dashboard_example.html`의 각 요소의 스타일을 절대 준수할 것
+- 로그인 페이지에서 미리 입력한 비번, 패스워드 부분 수정하지 않기, 외부에서 미리 해당 이메일로 로그인하고 테스트해보기 위함
