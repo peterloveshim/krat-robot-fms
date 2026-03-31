@@ -35,11 +35,7 @@ function SeverityIcon({ severity }: { severity: IncidentSeverity }): JSX.Element
       {isCritical && (
         <span className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
           severity === "CRITICAL" ? "bg-destructive" : "bg-amber-400"
-        }`}>
-          <span className={`absolute inset-0 rounded-full animate-ping opacity-40 ${
-            severity === "CRITICAL" ? "bg-destructive" : "bg-amber-400"
-          }`} />
-        </span>
+        }`} />
       )}
     </div>
   );
@@ -99,13 +95,13 @@ function IncidentSkeletonItem(): JSX.Element {
     <div className="relative bg-card border border-border rounded-xl overflow-hidden">
       <div className="absolute left-0 top-0 w-[3px] h-full bg-white/[0.04] opacity-40" />
       <div className="pl-5 pr-4 py-3.5 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-white/[0.04] animate-pulse opacity-40 flex-shrink-0" />
+        <div className="w-8 h-8 rounded-lg bg-white/[0.04] opacity-40 flex-shrink-0" />
         <div className="flex-1 min-w-0 space-y-1.5">
-          <div className="h-[9px] w-16 rounded bg-white/[0.04] animate-pulse opacity-40" />
-          <div className="h-[13px] w-36 rounded bg-white/[0.04] animate-pulse opacity-40" />
-          <div className="h-[11px] w-24 rounded bg-white/[0.04] animate-pulse opacity-25" />
+          <div className="h-[9px] w-16 rounded bg-white/[0.04] opacity-40" />
+          <div className="h-[13px] w-36 rounded bg-white/[0.04] opacity-40" />
+          <div className="h-[11px] w-24 rounded bg-white/[0.04] opacity-25" />
         </div>
-        <div className="h-[20px] w-14 rounded-md bg-white/[0.04] animate-pulse opacity-40 flex-shrink-0" />
+        <div className="h-[20px] w-14 rounded-md bg-white/[0.04] opacity-40 flex-shrink-0" />
       </div>
     </div>
   );
@@ -124,7 +120,7 @@ export function IncidentList({ incidents }: IncidentListProps): JSX.Element {
         {shown.map((incident) => (
           <div
             key={incident.id}
-            className={`group relative rounded-xl overflow-hidden transition-colors duration-200 border ${
+            className={`group relative rounded-xl overflow-hidden border ${
               incident.severity === "CRITICAL"
                 ? "bg-[#180000] border-destructive/40"
                 : incident.severity === "HIGH"
@@ -154,7 +150,7 @@ export function IncidentList({ incidents }: IncidentListProps): JSX.Element {
                       })}
                     </div>
                   </div>
-                  <div className="text-[13px] font-semibold text-foreground truncate group-hover:text-white transition-colors">
+                  <div className="text-[13px] font-semibold text-foreground truncate">
                     {incident.title}
                   </div>
                   <div className="text-[11px] text-muted-foreground mt-0.5">

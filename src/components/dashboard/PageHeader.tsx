@@ -47,8 +47,7 @@ function LiveClock(): JSX.Element {
       {/* LIVE 인디케이터 — 글로우 효과 강화 */}
       <div className="flex flex-col items-center gap-1 pl-3 border-l border-white/[0.08]">
         <div className="relative">
-          <span className="animate-pulse block w-2 h-2 rounded-full bg-green-400" />
-          <span className="absolute inset-0 rounded-full bg-green-400 opacity-40 animate-ping" />
+          <span className="block w-2 h-2 rounded-full bg-green-400" />
         </div>
         <span className="text-[9px] font-bold tracking-[0.15em] text-green-400 uppercase">
           live

@@ -17,7 +17,7 @@ function MissionStatusBadge({ status }: { status: MissionStatus }): JSX.Element 
     IN_PROGRESS: {
       label: "진행중",
       className: "bg-transparent border border-[#333] text-foreground hover:bg-transparent",
-      dotClass: "bg-foreground animate-pulse",
+      dotClass: "bg-foreground",
     },
     COMPLETED: {
       label: "완료",
@@ -49,7 +49,7 @@ function MissionStatusBadge({ status }: { status: MissionStatus }): JSX.Element 
   const c = config[status];
   return (
     <Badge className={`text-[11px] font-semibold px-2 py-0.5 rounded-md gap-1.5 ${c.className}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${c.dotClass} ${status === "IN_PROGRESS" ? "animate-pulse" : ""}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${c.dotClass}`} />
       {c.label}
     </Badge>
   );
@@ -75,7 +75,7 @@ function CoverageBar({ value }: { value: number }): JSX.Element {
     <div className="flex items-center gap-2 min-w-[80px]">
       <div className="flex-1 h-[3px] bg-white/[0.06] rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${colorClass}`}
+          className={`h-full rounded-full ${colorClass}`}
           style={{ width: `${value}%` }}
         />
       </div>
@@ -92,23 +92,23 @@ function MissionSkeletonRow(): JSX.Element {
   return (
     <TableRow className="border-border">
       <TableCell className="py-3 px-4">
-        <div className="h-[14px] w-20 rounded bg-[#1a1a1a] animate-pulse" />
+        <div className="h-[14px] w-20 rounded bg-[#1a1a1a]" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[12px] w-24 rounded bg-[#1a1a1a] animate-pulse mb-1" />
-        <div className="h-[10px] w-16 rounded bg-[#1a1a1a] animate-pulse opacity-60" />
+        <div className="h-[12px] w-24 rounded bg-[#1a1a1a] mb-1" />
+        <div className="h-[10px] w-16 rounded bg-[#1a1a1a] opacity-60" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[12px] w-20 rounded bg-[#1a1a1a] animate-pulse" />
+        <div className="h-[12px] w-20 rounded bg-[#1a1a1a]" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[13px] w-10 rounded bg-[#1a1a1a] animate-pulse" />
+        <div className="h-[13px] w-10 rounded bg-[#1a1a1a]" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[3px] w-full rounded-full bg-[#1a1a1a] animate-pulse" />
+        <div className="h-[3px] w-full rounded-full bg-[#1a1a1a]" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[22px] w-14 rounded-md bg-[#1a1a1a] animate-pulse" />
+        <div className="h-[22px] w-14 rounded-md bg-[#1a1a1a]" />
       </TableCell>
     </TableRow>
   );
@@ -140,7 +140,7 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
             {missions.map((mission) => (
               <TableRow
                 key={mission.id}
-                className="border-border hover:bg-[#161616] transition-colors group"
+                className="border-border group"
               >
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
                     </span>
                     <ArrowUpRight
                       size={12}
-                      className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-muted-foreground opacity-0 group-hover:opacity-100"
                     />
                   </div>
                 </TableCell>

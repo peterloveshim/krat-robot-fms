@@ -43,11 +43,8 @@ function RobotTypeIndicator({ subtype, status }: { subtype: Robot["subtype"]; st
   return (
     <div className={`relative w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 border ${bgClass} ${textClass} ${borderClass}`}>
       {label}
-      {/* 활성 상태 펄스 */}
       {isActive && (
-        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-background">
-          <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-40" />
-        </span>
+        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-green-400 border-2 border-background" />
       )}
     </div>
   );
@@ -75,7 +72,7 @@ function BatteryGauge({ pct }: { pct: number }): JSX.Element {
         {Array.from({ length: segments }, (_, i) => (
           <div
             key={i}
-            className={`h-[6px] flex-1 rounded-[1px] transition-colors duration-300 ${getSegmentColor(i)}`}
+            className={`h-[6px] flex-1 rounded-[1px]  ${getSegmentColor(i)}`}
           />
         ))}
       </div>
@@ -115,7 +112,7 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
     <Tooltip>
       <TooltipTrigger>
         <div
-          className={`group relative bg-card border rounded-xl cursor-pointer transition-colors duration-200 text-left w-full overflow-hidden ${isError ? "border-destructive/30" : "border-border hover:border-[#2a2a2a]"}`}
+          className={`group relative bg-card border rounded-xl cursor-pointer text-left w-full overflow-hidden ${isError ? "border-destructive/30" : "border-border"}`}
         >
           {/* 에러 상태 — 상단 경고 바 */}
           {isError && (
@@ -127,7 +124,7 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
             <div className="flex items-start gap-3 mb-3">
               <RobotTypeIndicator subtype={robot.subtype} status={robot.status} />
               <div className="flex-1 min-w-0">
-                <div className="text-[14px] font-bold truncate text-foreground group-hover:text-white transition-colors">
+                <div className="text-[14px] font-bold truncate text-foreground">
                   {robot.displayName}
                 </div>
                 <div className="text-[10px] text-muted-foreground font-mono tracking-wider">

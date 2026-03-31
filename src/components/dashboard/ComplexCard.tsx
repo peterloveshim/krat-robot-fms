@@ -74,7 +74,7 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
 
   return (
     <div
-      className={`group relative bg-card border rounded-xl p-4 transition-colors duration-200 overflow-hidden ${
+      className={`group relative bg-card border rounded-xl p-4 overflow-hidden ${
         hasError ? "border-destructive/30" : "border-border"
       }`}
     >
@@ -92,7 +92,7 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
               {complex.district}
             </span>
           </div>
-          <div className="text-[14px] font-bold text-foreground truncate group-hover:text-white transition-colors">
+          <div className="text-[14px] font-bold text-foreground truncate">
             {complex.name}
           </div>
           <div className="text-[10px] text-muted-foreground mt-0.5">

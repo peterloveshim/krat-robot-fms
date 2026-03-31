@@ -33,7 +33,7 @@ export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Elemen
           return (
             <div
               key={item.id}
-              className={`group bg-card border rounded-xl overflow-hidden transition-colors duration-200 ${
+              className={`group bg-card border rounded-xl overflow-hidden ${
                 isCritical ? "border-destructive/30" : "border-border"
               }`}
             >
@@ -85,7 +85,7 @@ export function ConsumableGrid({ consumables }: ConsumableGridProps): JSX.Elemen
                   </div>
                   <div className="relative h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
                     <div
-                      className={`h-full rounded-full transition-all duration-500 ${getProgressColor(item.remainingPct)}`}
+                      className={`h-full rounded-full ${getProgressColor(item.remainingPct)}`}
                       style={{ width: `${item.remainingPct}%` }}
                     />
                   </div>
