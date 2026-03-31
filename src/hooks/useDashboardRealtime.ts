@@ -22,11 +22,38 @@ export type DashboardData = {
   consumables: Consumable[];
 };
 
-export function useDashboardRealtime(initialData: DashboardData): DashboardData {
-  const [data, setData] = useState<DashboardData>(initialData);
+const initialEmpty: DashboardData = {
+  kpiData: {
+    totalRobots: 0,
+    operatingRobots: 0,
+    todayMissions: 0,
+    todayAreaM2: 0,
+    openIncidents: 0,
+  },
+  robots: [],
+  complexes: [],
+  missions: [],
+  incidents: [],
+  consumables: [],
+};
+
+export function useDashboardRealtime(): DashboardData {
+  const [data, setData] = useState<DashboardData>(initialEmpty);
 
   useEffect(() => {
     const supabase = createClient();
+
+    // 초기 데이터 fetch
+    Promise.all([
+      fetchRobotsClient(),
+      fetchComplexesClient(),
+      fetchAlertConsumablesClient(),
+      fetchKpiDataClient(),
+      fetchRecentMissionsClient(),
+      fetchOpenIncidentsClient(),
+    ]).then(([robots, complexes, consumables, kpiData, missions, incidents]) => {
+      setData({ robots, complexes, consumables, kpiData, missions, incidents });
+    });
 
     // robots 변경 → robots + complexes + consumables + kpi 갱신
     const robotsChannel = supabase
@@ -44,7 +71,12 @@ export function useDashboardRealtime(initialData: DashboardData): DashboardData 
           setData((prev) => ({ ...prev, robots, complexes, consumables, kpiData }));
         },
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+          console.error("[Realtime] robots channel error:", err);
+          supabase.removeChannel(robotsChannel);
+        }
+      });
 
     // missions 변경 → missions + kpi 갱신
     const missionsChannel = supabase
@@ -60,7 +92,12 @@ export function useDashboardRealtime(initialData: DashboardData): DashboardData 
           setData((prev) => ({ ...prev, missions, kpiData }));
         },
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+          console.error("[Realtime] missions channel error:", err);
+          supabase.removeChannel(missionsChannel);
+        }
+      });
 
     // incidents 변경 → incidents + kpi 갱신
     const incidentsChannel = supabase
@@ -76,7 +113,12 @@ export function useDashboardRealtime(initialData: DashboardData): DashboardData 
           setData((prev) => ({ ...prev, incidents, kpiData }));
         },
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+          console.error("[Realtime] incidents channel error:", err);
+          supabase.removeChannel(incidentsChannel);
+        }
+      });
 
     return () => {
       supabase.removeChannel(robotsChannel);

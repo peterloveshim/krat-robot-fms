@@ -8,10 +8,10 @@ import { MissionsTable } from "./MissionsTable";
 import { IncidentList } from "./IncidentList";
 import { ConsumableGrid } from "./ConsumableGrid";
 import { Phase2Banner } from "./Phase2Banner";
-import { useDashboardRealtime, type DashboardData } from "@/hooks/useDashboardRealtime";
+import { useDashboardRealtime } from "@/hooks/useDashboardRealtime";
 
-export function DashboardClient(props: DashboardData): JSX.Element {
-  const data = useDashboardRealtime(props);
+export function DashboardClient(): JSX.Element {
+  const data = useDashboardRealtime();
 
   return (
     <>
