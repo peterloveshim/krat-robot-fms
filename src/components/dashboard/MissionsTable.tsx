@@ -16,39 +16,39 @@ function MissionStatusBadge({ status }: { status: MissionStatus }): JSX.Element 
   const config: Record<MissionStatus, { label: string; className: string; dotClass: string }> = {
     IN_PROGRESS: {
       label: "진행중",
-      className: "bg-purple-500/10 text-purple-400 hover:bg-purple-500/10",
-      dotClass: "bg-purple-400",
+      className: "bg-transparent border border-[#333] text-foreground hover:bg-transparent",
+      dotClass: "bg-foreground animate-pulse",
     },
     COMPLETED: {
       label: "완료",
-      className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
-      dotClass: "bg-green-400",
+      className: "bg-transparent border border-[#2a2a2a] text-muted-foreground hover:bg-transparent",
+      dotClass: "bg-muted-foreground",
     },
     FAILED: {
       label: "실패",
-      className: "bg-destructive/10 text-destructive hover:bg-destructive/10",
+      className: "bg-transparent border border-destructive/40 text-destructive hover:bg-transparent",
       dotClass: "bg-destructive",
     },
     CANCELLED: {
       label: "취소",
-      className: "bg-white/[0.08] text-muted-foreground hover:bg-white/[0.08]",
+      className: "bg-transparent border border-[#2a2a2a] text-muted-foreground hover:bg-transparent",
       dotClass: "bg-muted-foreground",
     },
     PAUSED: {
       label: "일시정지",
-      className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
-      dotClass: "bg-amber-400",
+      className: "bg-transparent border border-[#444] text-muted-foreground hover:bg-transparent",
+      dotClass: "bg-muted-foreground",
     },
     SCHEDULED: {
       label: "예정",
-      className: "bg-primary/10 text-primary hover:bg-primary/10",
-      dotClass: "bg-primary",
+      className: "bg-transparent border border-[#333] text-foreground hover:bg-transparent",
+      dotClass: "bg-foreground",
     },
   };
 
   const c = config[status];
   return (
-    <Badge className={`text-[11px] font-semibold px-2 py-0.5 rounded-md border-0 gap-1.5 ${c.className}`}>
+    <Badge className={`text-[11px] font-semibold px-2 py-0.5 rounded-md gap-1.5 ${c.className}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${c.dotClass} ${status === "IN_PROGRESS" ? "animate-pulse" : ""}`} />
       {c.label}
     </Badge>
@@ -90,25 +90,25 @@ const MISSIONS_MAX = 10;
 
 function MissionSkeletonRow(): JSX.Element {
   return (
-    <TableRow className="border-white/[0.04] glass-table-row">
+    <TableRow className="border-border">
       <TableCell className="py-3 px-4">
-        <div className="h-[14px] w-20 rounded bg-white/[0.04] animate-pulse opacity-40" />
+        <div className="h-[14px] w-20 rounded bg-[#1a1a1a] animate-pulse" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[12px] w-24 rounded bg-white/[0.04] animate-pulse opacity-40 mb-1" />
-        <div className="h-[10px] w-16 rounded bg-white/[0.04] animate-pulse opacity-25" />
+        <div className="h-[12px] w-24 rounded bg-[#1a1a1a] animate-pulse mb-1" />
+        <div className="h-[10px] w-16 rounded bg-[#1a1a1a] animate-pulse opacity-60" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[12px] w-20 rounded bg-white/[0.04] animate-pulse opacity-40" />
+        <div className="h-[12px] w-20 rounded bg-[#1a1a1a] animate-pulse" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[13px] w-10 rounded bg-white/[0.04] animate-pulse opacity-40" />
+        <div className="h-[13px] w-10 rounded bg-[#1a1a1a] animate-pulse" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[3px] w-full rounded-full bg-white/[0.04] animate-pulse opacity-40" />
+        <div className="h-[3px] w-full rounded-full bg-[#1a1a1a] animate-pulse" />
       </TableCell>
       <TableCell className="py-3 px-4">
-        <div className="h-[22px] w-14 rounded-md bg-white/[0.04] animate-pulse opacity-40" />
+        <div className="h-[22px] w-14 rounded-md bg-[#1a1a1a] animate-pulse" />
       </TableCell>
     </TableRow>
   );
@@ -122,10 +122,10 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
   return (
     <section className="h-full flex flex-col">
       <SectionHeader title="최근 미션" action="전체 보기 →" />
-      <div className="flex-1 rounded-xl overflow-hidden glass-table-container">
+      <div className="flex-1 rounded-xl overflow-hidden bg-card border border-border">
         <Table>
           <TableHeader>
-            <TableRow className="glass-table-header hover:bg-white/[0.03] border-white/[0.06]">
+            <TableRow className="hover:bg-white/[0.02] border-border bg-[#141414]">
               {["로봇", "단지 / 구역", "시작", "면적", "커버리지", "상태"].map((h) => (
                 <TableHead
                   key={h}
@@ -137,11 +137,10 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {missions.map((mission, index) => (
+            {missions.map((mission) => (
               <TableRow
                 key={mission.id}
-                className="border-white/[0.04] glass-table-row group"
-                style={{ animationDelay: `${index * 35}ms` }}
+                className="border-border hover:bg-[#161616] transition-colors group"
               >
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-2">

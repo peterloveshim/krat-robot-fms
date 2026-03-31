@@ -22,19 +22,19 @@ function RobotTypeIndicator({ subtype, status }: { subtype: Robot["subtype"]; st
   let borderClass: string;
 
   if (isWet) {
-    bgClass = "bg-primary/10";
-    textClass = "text-primary";
-    borderClass = "border-primary/20";
+    bgClass = "bg-white/[0.08]";
+    textClass = "text-foreground";
+    borderClass = "border-border";
     label = "W";
   } else if (isNamux) {
-    bgClass = "bg-green-400/10";
-    textClass = "text-green-400";
-    borderClass = "border-green-400/20";
+    bgClass = "bg-white/[0.08]";
+    textClass = "text-foreground";
+    borderClass = "border-border";
     label = "A";
   } else {
-    bgClass = "bg-amber-400/10";
-    textClass = "text-amber-400";
-    borderClass = "border-amber-400/20";
+    bgClass = "bg-white/[0.08]";
+    textClass = "text-foreground";
+    borderClass = "border-border";
     label = "D";
   }
 
@@ -106,40 +106,20 @@ function DataPoint({
   );
 }
 
-function getGlowClass(status: Robot["status"]): string {
-  switch (status) {
-    case "ERROR":
-      return "glow-red";
-    case "WORKING":
-      return "glow-purple";
-    case "CHARGING":
-      return "glow-cyan";
-    case "ONLINE":
-    case "RETURNING":
-      return "glow-green";
-    default:
-      return "";
-  }
-}
-
 export function RobotCard({ robot }: RobotCardProps): JSX.Element {
   const isCleaning = robot.category === "CLEANING";
   const isWet = robot.subtype === "WET_SCRUB";
   const isError = robot.status === "ERROR";
-  const glowClass = getGlowClass(robot.status);
 
   return (
     <Tooltip>
       <TooltipTrigger>
         <div
-          className={`group relative glass-card rounded-xl cursor-pointer transition-all duration-300 text-left w-full overflow-hidden ${glowClass}`}
+          className={`group relative bg-card border rounded-xl cursor-pointer transition-colors duration-200 text-left w-full overflow-hidden ${isError ? "border-destructive/30" : "border-border hover:border-[#2a2a2a]"}`}
         >
-          {/* 에러 상태 — 상단 경고 바 (마젠타-레드 그라디언트) */}
+          {/* 에러 상태 — 상단 경고 바 */}
           {isError && (
-            <div
-              className="h-[2px]"
-              style={{ background: "linear-gradient(90deg, #FF3B5C, rgba(255, 0, 110, 0.6), transparent)" }}
-            />
+            <div className="h-[2px] bg-destructive" />
           )}
 
           <div className="p-4">
@@ -162,8 +142,8 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
               <BatteryGauge pct={robot.batteryPct} />
             </div>
 
-            {/* 데이터 포인트 — glass 내부 패널 */}
-            <div className="flex items-start gap-4 py-2 px-2 bg-white/2 rounded-lg mb-3 border border-white/4">
+            {/* 데이터 포인트 내부 패널 */}
+            <div className="flex items-start gap-4 py-2 px-2 bg-[#0e0e0e] rounded-lg mb-3 border border-border">
               {isCleaning && isWet ? (
                 <>
                   <DataPoint
@@ -236,7 +216,7 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
       </TooltipTrigger>
       <TooltipContent
         side="top"
-        className="glass-panel rounded-lg text-muted-foreground text-xs"
+        className="bg-[#1a1a1a] border border-border text-muted-foreground text-xs"
       >
         <p>{robot.manufacturer} · {robot.model}</p>
         <p className="font-mono text-muted-foreground/70">{robot.firmwareVersion}</p>

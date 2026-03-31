@@ -9,39 +9,39 @@ type StatusConfig = {
 const STATUS_MAP: Record<RobotStatus, StatusConfig> = {
   ONLINE: {
     label: "대기",
-    className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
+    className: "bg-transparent border border-[#1a3a1a] text-[#34d058] hover:bg-transparent",
   },
   IDLE: {
     label: "대기",
-    className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
+    className: "bg-transparent border border-[#1a3a1a] text-[#34d058] hover:bg-transparent",
   },
   WORKING: {
     label: "청소중",
-    className: "bg-purple-500/10 text-purple-400 hover:bg-purple-500/10",
+    className: "bg-transparent border border-[#333] text-foreground hover:bg-transparent",
   },
   CHARGING: {
     label: "충전중",
-    className: "bg-primary/10 text-primary hover:bg-primary/10",
+    className: "bg-transparent border border-[#333] text-muted-foreground hover:bg-transparent",
   },
   RETURNING: {
     label: "복귀중",
-    className: "bg-primary/10 text-primary hover:bg-primary/10",
+    className: "bg-transparent border border-[#333] text-muted-foreground hover:bg-transparent",
   },
   ERROR: {
     label: "에러",
-    className: "bg-destructive/10 text-destructive hover:bg-destructive/10",
+    className: "bg-transparent border border-destructive/50 text-destructive hover:bg-transparent",
   },
   OFFLINE: {
     label: "오프라인",
-    className: "bg-white/[0.04] text-muted-foreground hover:bg-white/[0.04]",
+    className: "bg-transparent border border-border text-muted-foreground hover:bg-transparent",
   },
   MANUAL: {
     label: "수동",
-    className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
+    className: "bg-transparent border border-[#4a3800] text-[#e5a020] hover:bg-transparent",
   },
   MAINTENANCE: {
     label: "점검중",
-    className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
+    className: "bg-transparent border border-[#4a3800] text-[#e5a020] hover:bg-transparent",
   },
 };
 
@@ -54,7 +54,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   const config = STATUS_MAP[status];
   return (
     <Badge
-      className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border-0 ${config.className} ${className ?? ""}`}
+      className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${config.className} ${className ?? ""}`}
     >
       {config.label}
     </Badge>

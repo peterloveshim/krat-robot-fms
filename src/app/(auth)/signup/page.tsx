@@ -29,7 +29,7 @@ export default function SignupPage() {
   const passwordValue = useWatch({ control, name: "password" }) ?? "";
 
   return (
-    <div className="bg-background/[0.03] border border-border rounded-xl p-8 space-y-6">
+    <div className="bg-card border border-border rounded-xl p-8 space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-foreground">회원가입</h1>
         <p className="text-sm text-muted-foreground mt-1">새 계정을 만드세요</p>
@@ -52,7 +52,7 @@ export default function SignupPage() {
             type="email"
             placeholder="your@email.com"
             autoComplete="email"
-            className="w-full h-10 px-3 rounded-lg bg-background/[0.05] border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+            className="w-full h-10 px-3 rounded-lg bg-input border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-white/30 focus:ring-0 transition-colors"
           />
           {errors.email && (
             <p className="text-xs text-destructive">{errors.email.message}</p>
@@ -68,11 +68,11 @@ export default function SignupPage() {
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="w-full h-10 px-3 rounded-lg bg-background/[0.05] border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+            className="w-full h-10 px-3 rounded-lg bg-input border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-white/30 focus:ring-0 transition-colors"
           />
 
           {/* 비밀번호 조건 안내 */}
-          <div className="bg-background/[0.05] border border-border rounded-lg p-3 space-y-1.5">
+          <div className="bg-[#141414] border border-border rounded-lg p-3 space-y-1.5">
             <p className="text-xs text-muted-foreground mb-2">비밀번호 조건</p>
             {passwordConditions.map((condition) => {
               const met = condition.test(passwordValue);
@@ -114,7 +114,7 @@ export default function SignupPage() {
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="w-full h-10 px-3 rounded-lg bg-background/[0.05] border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+            className="w-full h-10 px-3 rounded-lg bg-input border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-white/30 focus:ring-0 transition-colors"
           />
           {errors.confirmPassword && (
             <p className="text-xs text-destructive">

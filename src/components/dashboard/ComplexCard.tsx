@@ -40,15 +40,8 @@ function MiniDonut({
         )`,
       }}
     >
-      {/* 도넛 중앙 구멍 — glass 효과로 뒷배경 비침 */}
-      <div
-        className="absolute inset-[3px] rounded-full flex items-center justify-center"
-        style={{
-          background: "rgba(4, 8, 18, 0.7)",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
-        }}
-      >
+      {/* 도넛 중앙 구멍 */}
+      <div className="absolute inset-[3px] rounded-full flex items-center justify-center bg-card">
         <span className="text-[11px] font-bold text-foreground tabular-nums">{total}</span>
       </div>
     </div>
@@ -81,16 +74,13 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
 
   return (
     <div
-      className={`group relative glass-card rounded-xl p-4 transition-all duration-300 overflow-hidden ${
-        hasError ? "glow-red" : ""
+      className={`group relative bg-card border rounded-xl p-4 transition-colors duration-200 overflow-hidden ${
+        hasError ? "border-destructive/30" : "border-border"
       }`}
     >
       {/* 에러 시 상단 경고 바 */}
       {hasError && (
-        <div
-          className="absolute top-0 left-0 right-0 h-[1px]"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(255, 59, 92, 0.5), transparent)" }}
-        />
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-destructive/50" />
       )}
 
       {/* 상단: 단지명 + 도넛 */}
@@ -117,7 +107,7 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
       </div>
 
       {/* 상태 분류 */}
-      <div className="flex flex-col gap-1.5 pt-3 border-t border-white/[0.06]">
+      <div className="flex flex-col gap-1.5 pt-3 border-t border-border">
         <StatusDot
           count={complex.robots.operating}
           label="가동"

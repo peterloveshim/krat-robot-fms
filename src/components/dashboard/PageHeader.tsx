@@ -47,10 +47,7 @@ function LiveClock(): JSX.Element {
       {/* LIVE 인디케이터 — 글로우 효과 강화 */}
       <div className="flex flex-col items-center gap-1 pl-3 border-l border-white/[0.08]">
         <div className="relative">
-          <span
-            className="animate-pulse block w-2 h-2 rounded-full bg-green-400"
-            style={{ boxShadow: "0 0 8px rgba(0, 245, 160, 0.6)" }}
-          />
+          <span className="animate-pulse block w-2 h-2 rounded-full bg-green-400" />
           <span className="absolute inset-0 rounded-full bg-green-400 opacity-40 animate-ping" />
         </div>
         <span className="text-[9px] font-bold tracking-[0.15em] text-green-400 uppercase">
@@ -67,15 +64,12 @@ export function PageHeader(): JSX.Element {
       {/* 좌측 — 타이틀 블록 */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Activity size={14} className="text-primary" />
-          <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase">
+          <Activity size={14} className="text-muted-foreground" />
+          <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
             Fleet Management System
           </span>
         </div>
-        <h1
-          className="text-[28px] font-extrabold tracking-[-0.04em] text-foreground leading-none"
-          style={{ textShadow: "0 0 40px rgba(0, 229, 255, 0.08)" }}
-        >
+        <h1 className="text-[28px] font-extrabold tracking-[-0.04em] text-foreground leading-none">
           통합 관제 대시보드
         </h1>
         <div className="flex items-center gap-2 mt-2">
@@ -86,8 +80,8 @@ export function PageHeader(): JSX.Element {
         </div>
       </div>
 
-      {/* 우측 — 시계 + 상태 (glass 처리) */}
-      <div className="flex-shrink-0 glass-card rounded-xl px-4 py-2.5">
+      {/* 우측 — 시계 + 상태 */}
+      <div className="flex-shrink-0 border border-border rounded-xl px-4 py-2.5 bg-card">
         <LiveClock />
       </div>
     </div>

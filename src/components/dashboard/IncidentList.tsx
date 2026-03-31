@@ -30,12 +30,7 @@ function SeverityIcon({ severity }: { severity: IncidentSeverity }): JSX.Element
   const isCritical = severity === "CRITICAL" || severity === "HIGH";
 
   return (
-    <div className={`relative w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-      severity === "CRITICAL" ? "bg-destructive/10" :
-      severity === "HIGH" ? "bg-amber-400/10" :
-      severity === "MEDIUM" ? "bg-primary/10" :
-      "bg-white/[0.04]"
-    }`}>
+    <div className="relative w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#1a1a1a] border border-border">
       <AlertTriangle size={14} className={colorMap[severity]} />
       {isCritical && (
         <span className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
@@ -54,28 +49,28 @@ function IncidentStatusBadge({ status }: { status: IncidentStatus }): JSX.Elemen
   const config: Record<IncidentStatus, { label: string; className: string; icon: React.ReactNode }> = {
     OPEN: {
       label: "OPEN",
-      className: "bg-destructive/10 text-destructive hover:bg-destructive/10",
+      className: "bg-transparent border border-destructive/50 text-destructive hover:bg-transparent",
       icon: <AlertTriangle size={10} />,
     },
     INVESTIGATING: {
       label: "조사중",
-      className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
+      className: "bg-transparent border border-[#4a3800] text-[#e5a020] hover:bg-transparent",
       icon: <Search size={10} />,
     },
     RESOLVED: {
       label: "해결됨",
-      className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
+      className: "bg-transparent border border-[#1a3a1a] text-[#34d058] hover:bg-transparent",
       icon: null,
     },
     CLOSED: {
       label: "종료",
-      className: "bg-white/[0.04] text-muted-foreground hover:bg-white/[0.04]",
+      className: "bg-transparent border border-border text-muted-foreground hover:bg-transparent",
       icon: null,
     },
   };
   const c = config[status];
   return (
-    <Badge className={`text-[10px] font-bold px-2 py-0.5 rounded-md border-0 gap-1 ${c.className}`}>
+    <Badge className={`text-[10px] font-bold px-2 py-0.5 rounded-md gap-1 ${c.className}`}>
       {c.icon}
       {c.label}
     </Badge>
@@ -101,7 +96,7 @@ const INCIDENTS_MAX = 6;
 
 function IncidentSkeletonItem(): JSX.Element {
   return (
-    <div className="relative glass-card rounded-xl overflow-hidden">
+    <div className="relative bg-card border border-border rounded-xl overflow-hidden">
       <div className="absolute left-0 top-0 w-[3px] h-full bg-white/[0.04] opacity-40" />
       <div className="pl-5 pr-4 py-3.5 flex items-center gap-3">
         <div className="w-8 h-8 rounded-lg bg-white/[0.04] animate-pulse opacity-40 flex-shrink-0" />
@@ -129,7 +124,13 @@ export function IncidentList({ incidents }: IncidentListProps): JSX.Element {
         {shown.map((incident) => (
           <div
             key={incident.id}
-            className="group relative glass-card rounded-xl overflow-hidden transition-all duration-300"
+            className={`group relative rounded-xl overflow-hidden transition-colors duration-200 border ${
+              incident.severity === "CRITICAL"
+                ? "bg-[#180000] border-destructive/40"
+                : incident.severity === "HIGH"
+                ? "bg-card border-[#2a1a00]"
+                : "bg-card border-border"
+            }`}
           >
             {/* 좌측 심각도 바 */}
             <div className={`absolute left-0 top-0 w-[3px] h-full ${getSeverityBarClass(incident.severity)}`} />

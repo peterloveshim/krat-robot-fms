@@ -8,7 +8,7 @@ export default function AuthLayout({
       <div className="w-full max-w-[400px]">
         {/* KRAT 로고 */}
         <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground text-[16px] font-bold flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-black text-[16px] font-bold flex-shrink-0">
             K
           </div>
           <div>

@@ -39,7 +39,7 @@ function LoginForm() {
     (callbackError ? CALLBACK_ERRORS[callbackError] : undefined);
 
   return (
-    <div className="bg-background/[0.03] border border-border rounded-xl p-8 space-y-6">
+    <div className="bg-card border border-border rounded-xl p-8 space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-foreground">로그인</h1>
         <p className="text-sm text-muted-foreground mt-1">계정에 로그인하세요</p>

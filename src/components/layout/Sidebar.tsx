@@ -97,13 +97,7 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
     <div className="flex flex-col h-full">
       {/* 로고 */}
       <div className="flex items-center gap-3 px-5 py-6">
-        <div
-          className="relative w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-extrabold flex-shrink-0"
-          style={{
-            background: "linear-gradient(135deg, #00E5FF, #FF006E)",
-            boxShadow: "0 4px 20px rgba(0, 229, 255, 0.25)",
-          }}
-        >
+        <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-black text-sm font-extrabold flex-shrink-0">
           K
         </div>
         <div>
@@ -135,13 +129,10 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
         <MqttStatusIndicator />
       </div>
 
-      {/* 사용자 정보 + 로그아웃 — glass 처리 */}
+      {/* 사용자 정보 + 로그아웃 */}
       <div className="px-4 py-4">
-        <div className="flex items-center gap-2.5 p-2 rounded-lg glass-card">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #00E5FF, #A855F7)" }}
-          >
+        <div className="flex items-center gap-2.5 p-2 rounded-lg bg-[#1a1a1a] border border-border">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0 bg-[#333]">
             {avatarInitial}
           </div>
           <div className="flex-1 min-w-0">
@@ -185,36 +176,33 @@ function NavItemButton({ item }: { item: NavItem }): JSX.Element {
       href={item.href}
       className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 ${
         isActive
-          ? "bg-primary/10 text-primary font-semibold"
+          ? "bg-white/[0.06] text-foreground font-semibold"
           : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
       }`}
     >
       {/* Active 인디케이터 — 좌측 바 */}
       {isActive && (
-        <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary"
-          style={{ boxShadow: "0 0 8px rgba(0, 229, 255, 0.5)" }}
-        />
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 rounded-r-full bg-white" />
       )}
 
-      <span className={`flex-shrink-0 transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
+      <span className={`flex-shrink-0 transition-colors ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
         {item.icon}
       </span>
       <span className="flex-1">{item.label}</span>
 
       {item.badge ? (
         <Badge
-          className={`text-[10px] px-1.5 py-0 rounded-md border-0 font-bold min-w-[20px] justify-center ${
+          className={`text-[10px] px-1.5 py-0 rounded-md font-bold min-w-[20px] justify-center ${
             item.badge.variant === "red"
-              ? "bg-destructive/10 text-destructive hover:bg-destructive/10"
-              : "bg-primary/15 text-primary hover:bg-primary/15"
+              ? "bg-transparent text-destructive border border-destructive/40 hover:bg-transparent"
+              : "bg-transparent text-foreground border border-white/20 hover:bg-transparent"
           }`}
         >
           {item.badge.count}
         </Badge>
       ) : (
         isActive && (
-          <ChevronRight size={14} className="text-primary/50" />
+          <ChevronRight size={14} className="text-muted-foreground" />
         )
       )}
     </Link>
@@ -233,15 +221,15 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
     <>
       {/* 모바일 햄버거 버튼 */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 w-9 h-9 rounded-lg glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 w-9 h-9 rounded-lg bg-[#111] border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
         onClick={() => setMobileOpen(true)}
         aria-label="메뉴 열기"
       >
         <Menu size={18} />
       </button>
 
-      {/* 데스크톱 사이드바 — glass-heavy 적용 */}
-      <aside className="hidden lg:flex flex-col w-[230px] h-screen sticky top-0 glass-heavy flex-shrink-0">
+      {/* 데스크톱 사이드바 */}
+      <aside className="hidden lg:flex flex-col w-[230px] h-screen sticky top-0 bg-[#080808] border-r border-sidebar-border flex-shrink-0">
         <SidebarContent user={user} />
       </aside>
 
@@ -249,10 +237,10 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 flex">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="relative w-[230px] h-full glass-heavy flex flex-col z-50">
+          <aside className="relative w-[230px] h-full bg-[#080808] border-r border-sidebar-border flex flex-col z-50">
             <button
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
               onClick={() => setMobileOpen(false)}
