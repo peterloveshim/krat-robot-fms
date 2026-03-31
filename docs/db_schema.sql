@@ -701,3 +701,5 @@ INSERT INTO zones (complex_id, name, zone_type, floor_level, area_m2, floor_mate
 --   - user_profiles: auth.users FK + user_role ENUM
 --   - 인덱스 보완: incidents(robot_id, zone_id), operational_insights(complex_id, zone_id, robot_category), user_profiles(role)
 -- ============================================================================
+
+
