@@ -165,6 +165,47 @@ await supabase
 
 ---
 
+## 데이터 fetching 패턴
+
+### [IMPORTANT] 서버 컴포넌트에서 Supabase 쿼리 금지
+
+페이지 이동 시 서버 컴포넌트의 데이터 fetch가 완료될 때까지 네비게이션이 블로킹된다.
+**대시보드 페이지의 데이터는 반드시 클라이언트에서 fetch할 것.**
+
+```ts
+// ❌ Bad — 서버 컴포넌트에서 Supabase 쿼리 (네비게이션 블로킹)
+export default async function DashboardPage() {
+  const data = await fetchRobots(); // 페이지 이동 시 여기서 블로킹
+  return <DashboardClient data={data} />;
+}
+
+// ✅ Good — 클라이언트 컴포넌트에서 초기 fetch + Realtime 갱신
+export default function DashboardPage() {
+  return <DashboardClient />; // 즉시 렌더링
+}
+// DashboardClient 내부 hook에서 useEffect로 fetch + Realtime 구독
+```
+
+### Realtime 구독 에러 처리 필수
+
+Supabase Realtime 구독 실패 시 에러 핸들러 없으면 재시도 루프로 인해 `ERR_INSUFFICIENT_RESOURCES` 발생.
+반드시 `CHANNEL_ERROR` / `TIMED_OUT` 상태에서 채널을 닫을 것.
+
+```ts
+// ✅ Good
+channel.subscribe((status, err) => {
+  if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+    console.error("[Realtime] error:", err);
+    supabase.removeChannel(channel);
+  }
+});
+
+// ❌ Bad — 에러 핸들러 없음 (재시도 루프 발생 가능)
+channel.subscribe();
+```
+
+---
+
 ## 중요 참고
 
 - [**IMPORTANT**] 보안 이슈가 있는 경우 매번 확인을 요청할 것
