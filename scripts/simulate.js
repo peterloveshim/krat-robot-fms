@@ -97,6 +97,7 @@ const createdIncidentIds = [];
 const pendingMissionTimers = new Map();
 const pendingIncidentTimers = new Map();
 
+let robotTickTimer = null;
 let isShuttingDown = false;
 
 // ─── 초기화 ──────────────────────────────────────────────────────
@@ -135,93 +136,94 @@ async function initialize() {
   console.log();
 }
 
-// ─── 로봇 상태/배터리 틱 ─────────────────────────────────────────
-async function tickRobots() {
+// ─── 로봇 상태/배터리 틱 (랜덤 1대) ────────────────────────────
+async function tickOneRobot() {
   if (isShuttingDown) return;
 
   const { data: robots, error } = await supabase
     .from("robots")
     .select(
-      "id, serial_number, display_name, status, battery_pct, current_zone_id, complex_id, subtype",
+      "id, serial_number, display_name, status, battery_pct, current_zone_id, complex_id, subtype, clean_water_pct, dirty_water_pct",
     );
-  if (error || !robots) return;
+  if (error || !robots || robots.length === 0) return;
 
-  const BATCH = [];
+  const robot = pick(robots); // 랜덤 1대 선택
 
-  for (const robot of robots) {
-    let battery = robot.battery_pct ?? 50;
-    let status = robot.status;
-    let zoneId = robot.current_zone_id;
+  let battery = robot.battery_pct ?? 50;
+  let status = robot.status;
+  let zoneId = robot.current_zone_id;
 
-    // 배터리 변동
-    if (status === "WORKING") battery = clamp(battery - randF(2, 5, 1), 0, 100);
-    else if (status === "CHARGING")
-      battery = clamp(battery + randF(6, 12, 1), 0, 100);
-    else if (status === "RETURNING")
-      battery = clamp(battery - randF(0.5, 1.5, 1), 0, 100);
+  // 배터리 변동
+  if (status === "WORKING") battery = clamp(battery - randF(2, 5, 1), 0, 100);
+  else if (status === "CHARGING")
+    battery = clamp(battery + randF(6, 12, 1), 0, 100);
+  else if (status === "RETURNING")
+    battery = clamp(battery - randF(0.5, 1.5, 1), 0, 100);
 
-    // 상태 전환
-    if (status === "WORKING" && battery < 15) {
-      status = "RETURNING";
-      log.robot(
-        `${robot.display_name} 배터리 부족 (${battery.toFixed(0)}%) → 복귀 중`,
-      );
-    } else if (status === "RETURNING") {
-      if (battery < 3) {
-        status = "CHARGING";
-        zoneId = null;
-        log.warn(`${robot.display_name} 도킹 → 충전 시작`);
-      }
-    } else if (status === "CHARGING" && battery >= 95) {
-      status = "IDLE";
-      log.ok(`${robot.display_name} 충전 완료 → 대기`);
-    } else if (status === "IDLE" && Math.random() < 0.25) {
-      // 25% 확률로 작업 시작
-      const zones =
-        zonesByComplex[robot.complex_id] || accessibleZones;
-      if (zones.length > 0) {
-        const zone = pick(zones);
-        status = "WORKING";
-        zoneId = zone.id;
-        battery = clamp(battery, 20, 100); // 최소 20%로 시작
-        log.robot(`${robot.display_name} 작업 시작 → ${zone.name}`);
-      }
-    } else if (status === "OFFLINE" && Math.random() < 0.15) {
+  // 상태 전환
+  if (status === "WORKING" && battery < 15) {
+    status = "RETURNING";
+    log.robot(
+      `${robot.display_name} 배터리 부족 (${battery.toFixed(0)}%) → 복귀 중`,
+    );
+  } else if (status === "RETURNING") {
+    if (battery < 3) {
       status = "CHARGING";
-      battery = rand(10, 30);
-      log.warn(`${robot.display_name} 재기동 → 충전 시작`);
-    } else if (status === "ERROR" && Math.random() < 0.2) {
-      status = "OFFLINE";
-      log.err(`${robot.display_name} ERROR → OFFLINE 전환`);
+      zoneId = null;
+      log.warn(`${robot.display_name} 도킹 → 충전 시작`);
     }
-
-    // WET_SCRUB: 물탱크 시뮬레이션
-    let cleanWater = robot.clean_water_pct;
-    let dirtyWater = robot.dirty_water_pct;
-    if (robot.subtype === "WET_SCRUB" && status === "WORKING") {
-      cleanWater = clamp((cleanWater ?? 80) - randF(0.5, 2, 1), 0, 100);
-      dirtyWater = clamp((dirtyWater ?? 20) + randF(0.5, 2, 1), 0, 100);
+  } else if (status === "CHARGING" && battery >= 95) {
+    status = "IDLE";
+    log.ok(`${robot.display_name} 충전 완료 → 대기`);
+  } else if (status === "IDLE" && Math.random() < 0.25) {
+    // 25% 확률로 작업 시작
+    const zones = zonesByComplex[robot.complex_id] || accessibleZones;
+    if (zones.length > 0) {
+      const zone = pick(zones);
+      status = "WORKING";
+      zoneId = zone.id;
+      battery = clamp(battery, 20, 100); // 최소 20%로 시작
+      log.robot(`${robot.display_name} 작업 시작 → ${zone.name}`);
     }
-
-    BATCH.push({
-      id: robot.id,
-      status,
-      battery_pct: parseFloat(battery.toFixed(1)),
-      current_zone_id: zoneId,
-      last_seen_at: new Date().toISOString(),
-      ...(robot.subtype === "WET_SCRUB" && {
-        clean_water_pct: typeof cleanWater === "number" ? parseFloat(cleanWater.toFixed(1)) : null,
-        dirty_water_pct: typeof dirtyWater === "number" ? parseFloat(dirtyWater.toFixed(1)) : null,
-      }),
-    });
+  } else if (status === "OFFLINE" && Math.random() < 0.15) {
+    status = "CHARGING";
+    battery = rand(10, 30);
+    log.warn(`${robot.display_name} 재기동 → 충전 시작`);
+  } else if (status === "ERROR" && Math.random() < 0.2) {
+    status = "OFFLINE";
+    log.err(`${robot.display_name} ERROR → OFFLINE 전환`);
   }
 
-  // 순차 업데이트 (배치 API 미지원)
-  await Promise.all(
-    BATCH.map(({ id, ...fields }) =>
-      supabase.from("robots").update(fields).eq("id", id),
-    ),
-  );
+  // WET_SCRUB: 물탱크 시뮬레이션
+  let cleanWater = robot.clean_water_pct;
+  let dirtyWater = robot.dirty_water_pct;
+  if (robot.subtype === "WET_SCRUB" && status === "WORKING") {
+    cleanWater = clamp((cleanWater ?? 80) - randF(0.5, 2, 1), 0, 100);
+    dirtyWater = clamp((dirtyWater ?? 20) + randF(0.5, 2, 1), 0, 100);
+  }
+
+  const fields = {
+    status,
+    battery_pct: parseFloat(battery.toFixed(1)),
+    current_zone_id: zoneId,
+    last_seen_at: new Date().toISOString(),
+    ...(robot.subtype === "WET_SCRUB" && {
+      clean_water_pct: typeof cleanWater === "number" ? parseFloat(cleanWater.toFixed(1)) : null,
+      dirty_water_pct: typeof dirtyWater === "number" ? parseFloat(dirtyWater.toFixed(1)) : null,
+    }),
+  };
+
+  await supabase.from("robots").update(fields).eq("id", robot.id);
+}
+
+// 5~10초 랜덤 간격으로 다음 틱 예약
+function scheduleNextRobotTick() {
+  if (isShuttingDown) return;
+  const delay = rand(5000, 10000);
+  robotTickTimer = setTimeout(async () => {
+    await tickOneRobot();
+    scheduleNextRobotTick();
+  }, delay);
 }
 
 // ─── 미션 생성 ───────────────────────────────────────────────────
@@ -381,6 +383,7 @@ async function resetData() {
   log.warn("종료 감지 — 데이터 초기화 중...");
 
   // 진행 중인 타이머 모두 취소
+  if (robotTickTimer) clearTimeout(robotTickTimer);
   for (const t of pendingMissionTimers.values()) clearTimeout(t);
   for (const t of pendingIncidentTimers.values()) clearTimeout(t);
 
@@ -439,23 +442,22 @@ async function resetData() {
 async function main() {
   await initialize();
 
-  // 첫 틱 즉시 실행
-  await tickRobots();
+  // 첫 틱 즉시 실행 후 랜덤 간격 스케줄 시작
+  await tickOneRobot();
+  scheduleNextRobotTick();
 
   // 인터벌 등록
-  //  ├── 5s: 로봇 상태/배터리 갱신
+  //  ├── 5~10s 랜덤: 로봇 1대 상태/배터리 갱신
   //  ├── 25s: 미션 생성 시도
   //  └── 40s: 인시던트 발생 시도
-  const t1 = setInterval(tickRobots, 5_000);
   const t2 = setInterval(tryCreateMission, 25_000);
   const t3 = setInterval(tryCreateIncident, 40_000);
 
-  log.ok(`${C.bold}시뮬레이션 시작${C.reset} (로봇 틱 5s / 미션 25s / 인시던트 40s)`);
+  log.ok(`${C.bold}시뮬레이션 시작${C.reset} (로봇 틱 5~10s 랜덤 / 미션 25s / 인시던트 40s)`);
   console.log();
 
   // 종료 핸들러
   async function shutdown() {
-    clearInterval(t1);
     clearInterval(t2);
     clearInterval(t3);
     await resetData();
