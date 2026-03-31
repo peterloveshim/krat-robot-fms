@@ -142,12 +142,14 @@ export function IncidentList({ incidents }: IncidentListProps): JSX.Element {
                     <span className="text-muted-foreground">·</span>
                     <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                       <Clock size={9} />
-                      {new Date(incident.occurredAt).toLocaleString("ko-KR", {
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      <span suppressHydrationWarning>
+                        {new Date(incident.occurredAt).toLocaleString("ko-KR", {
+                          month: "2-digit",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
                     </div>
                   </div>
                   <div className="text-[13px] font-semibold text-foreground truncate">

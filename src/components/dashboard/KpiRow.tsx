@@ -14,7 +14,7 @@ function StatItem({ label, value, subtext, isAlert }: StatItemProps): JSX.Elemen
       <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground mb-2">
         {label}
       </div>
-      <div className={`text-[32px] font-bold leading-none tabular-nums ${isAlert ? "text-destructive" : "text-foreground"}`}>
+      <div suppressHydrationWarning className={`text-[32px] font-bold leading-none tabular-nums ${isAlert ? "text-destructive" : "text-foreground"}`}>
         {value}
       </div>
       {subtext && (

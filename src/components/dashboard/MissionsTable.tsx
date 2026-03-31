@@ -160,14 +160,16 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-1.5 text-[12px] font-mono text-muted-foreground tabular-nums">
                     <Clock size={11} className="text-muted-foreground/70" />
-                    {mission.startedAt
-                      ? new Date(mission.startedAt).toLocaleString("ko-KR", {
-                          month: "2-digit",
-                          day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : "-"}
+                    <span suppressHydrationWarning>
+                      {mission.startedAt
+                        ? new Date(mission.startedAt).toLocaleString("ko-KR", {
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-"}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell className="py-3 px-4">

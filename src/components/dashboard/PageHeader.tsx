@@ -37,10 +37,10 @@ function LiveClock(): JSX.Element {
     <div className="flex items-center gap-3">
       {/* 타임스탬프 블록 */}
       <div className="text-right">
-        <div className="text-[11px] text-muted-foreground font-medium tracking-wide">
+        <div suppressHydrationWarning className="text-[11px] text-muted-foreground font-medium tracking-wide">
           {date}
         </div>
-        <div className="text-[18px] font-mono font-bold text-foreground tracking-wider leading-tight tabular-nums">
+        <div suppressHydrationWarning className="text-[18px] font-mono font-bold text-foreground tracking-wider leading-tight tabular-nums">
           {time}
         </div>
       </div>

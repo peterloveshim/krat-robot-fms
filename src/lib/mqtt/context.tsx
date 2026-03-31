@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -165,10 +166,13 @@ export function MqttProvider({ children, brokerUrl }: MqttProviderProps) {
     clientRef.current.publish(topic, payload);
   }, []);
 
+  const contextValue = useMemo(
+    () => ({ status, error, subscribe, unsubscribe, publish }),
+    [status, error, subscribe, unsubscribe, publish]
+  );
+
   return (
-    <MqttContext.Provider
-      value={{ status, error, subscribe, unsubscribe, publish }}
-    >
+    <MqttContext.Provider value={contextValue}>
       {children}
     </MqttContext.Provider>
   );
