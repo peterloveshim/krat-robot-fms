@@ -37,10 +37,10 @@ function LiveClock(): JSX.Element {
     <div className="flex items-center gap-3">
       {/* 타임스탬프 블록 */}
       <div className="text-right">
-        <div className="text-[11px] text-krat-tx3 font-medium tracking-wide">
+        <div className="text-[11px] text-muted-foreground font-medium tracking-wide">
           {date}
         </div>
-        <div className="text-[18px] font-mono font-bold text-krat-tx tracking-wider leading-tight tabular-nums">
+        <div className="text-[18px] font-mono font-bold text-foreground tracking-wider leading-tight tabular-nums">
           {time}
         </div>
       </div>
@@ -48,12 +48,12 @@ function LiveClock(): JSX.Element {
       <div className="flex flex-col items-center gap-1 pl-3 border-l border-white/[0.08]">
         <div className="relative">
           <span
-            className="live-dot block w-2 h-2 rounded-full bg-krat-green"
+            className="animate-pulse block w-2 h-2 rounded-full bg-green-400"
             style={{ boxShadow: "0 0 8px rgba(0, 245, 160, 0.6)" }}
           />
-          <span className="absolute inset-0 rounded-full bg-krat-green opacity-40 animate-ping" />
+          <span className="absolute inset-0 rounded-full bg-green-400 opacity-40 animate-ping" />
         </div>
-        <span className="text-[9px] font-bold tracking-[0.15em] text-krat-green uppercase">
+        <span className="text-[9px] font-bold tracking-[0.15em] text-green-400 uppercase">
           live
         </span>
       </div>
@@ -67,20 +67,20 @@ export function PageHeader(): JSX.Element {
       {/* 좌측 — 타이틀 블록 */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Activity size={14} className="text-krat-accent" />
-          <span className="text-[10px] font-bold tracking-[0.2em] text-krat-accent uppercase">
+          <Activity size={14} className="text-primary" />
+          <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase">
             Fleet Management System
           </span>
         </div>
         <h1
-          className="text-[28px] font-extrabold tracking-[-0.04em] text-krat-tx leading-none"
+          className="text-[28px] font-extrabold tracking-[-0.04em] text-foreground leading-none"
           style={{ textShadow: "0 0 40px rgba(0, 229, 255, 0.08)" }}
         >
           통합 관제 대시보드
         </h1>
         <div className="flex items-center gap-2 mt-2">
-          <Radio size={12} className="text-krat-tx3" />
-          <p className="text-[12px] text-krat-tx3">
+          <Radio size={12} className="text-muted-foreground" />
+          <p className="text-[12px] text-muted-foreground">
             8개 단지 · 15대 로봇 실시간 모니터링
           </p>
         </div>

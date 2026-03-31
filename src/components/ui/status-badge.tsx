@@ -9,39 +9,39 @@ type StatusConfig = {
 const STATUS_MAP: Record<RobotStatus, StatusConfig> = {
   ONLINE: {
     label: "대기",
-    className: "bg-krat-green-bg text-krat-green hover:bg-krat-green-bg",
+    className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
   },
   IDLE: {
     label: "대기",
-    className: "bg-krat-green-bg text-krat-green hover:bg-krat-green-bg",
+    className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
   },
   WORKING: {
     label: "청소중",
-    className: "bg-krat-purple-bg text-krat-purple hover:bg-krat-purple-bg",
+    className: "bg-purple-500/10 text-purple-400 hover:bg-purple-500/10",
   },
   CHARGING: {
     label: "충전중",
-    className: "bg-krat-accent/10 text-krat-accent hover:bg-krat-accent/10",
+    className: "bg-primary/10 text-primary hover:bg-primary/10",
   },
   RETURNING: {
     label: "복귀중",
-    className: "bg-krat-accent/10 text-krat-accent hover:bg-krat-accent/10",
+    className: "bg-primary/10 text-primary hover:bg-primary/10",
   },
   ERROR: {
     label: "에러",
-    className: "bg-krat-red-bg text-krat-red hover:bg-krat-red-bg",
+    className: "bg-destructive/10 text-destructive hover:bg-destructive/10",
   },
   OFFLINE: {
     label: "오프라인",
-    className: "bg-white/[0.04] text-krat-tx3 hover:bg-white/[0.04]",
+    className: "bg-white/[0.04] text-muted-foreground hover:bg-white/[0.04]",
   },
   MANUAL: {
     label: "수동",
-    className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
+    className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
   },
   MAINTENANCE: {
     label: "점검중",
-    className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
+    className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
   },
 };
 

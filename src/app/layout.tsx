@@ -32,7 +32,7 @@ export default function RootLayout({
       lang="ko"
       className={`${plusJakartaSans.variable} ${jetbrainsMono.variable} dark`}
     >
-      <body className="min-h-screen bg-krat-bg text-krat-tx antialiased">
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <TooltipProvider>
           <MqttProvider>{children}</MqttProvider>
         </TooltipProvider>

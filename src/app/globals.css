@@ -42,31 +42,6 @@
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
-
-  /* KRAT FMS 색상 토큰 — Nebula Control 팔레트 */
-  --color-krat-bg: var(--krat-bg);
-  --color-krat-bg2: var(--krat-bg2);
-  --color-krat-bg3: var(--krat-bg3);
-  --color-krat-bg4: var(--krat-bg4);
-  --color-krat-tx: var(--krat-tx);
-  --color-krat-tx2: var(--krat-tx2);
-  --color-krat-tx3: var(--krat-tx3);
-  --color-krat-accent: var(--krat-accent);
-  --color-krat-accent2: var(--krat-accent2);
-  --color-krat-green: var(--krat-green);
-  --color-krat-green-bg: var(--krat-green-bg);
-  --color-krat-red: var(--krat-red);
-  --color-krat-red-bg: var(--krat-red-bg);
-  --color-krat-amber: var(--krat-amber);
-  --color-krat-amber-bg: var(--krat-amber-bg);
-  --color-krat-purple: var(--krat-purple);
-  --color-krat-purple-bg: var(--krat-purple-bg);
-  --color-krat-border: var(--krat-border);
-  --color-krat-cyan: var(--krat-cyan);
-  --color-krat-violet: var(--krat-violet);
-  --color-krat-magenta: var(--krat-magenta);
-  --color-krat-magenta-bg: var(--krat-magenta-bg);
-  --radius-krat: var(--krat-radius);
 }
 
 /* Nebula Control — Deep Space Navy 기반 */
@@ -102,30 +77,6 @@
   --sidebar-border: rgba(255, 255, 255, 0.05);
   --sidebar-ring: #00E5FF;
 
-  /* KRAT FMS 전용 변수 — Nebula Control */
-  --krat-bg: #040812;
-  --krat-bg2: rgba(255, 255, 255, 0.03);
-  --krat-bg3: rgba(255, 255, 255, 0.05);
-  --krat-bg4: rgba(255, 255, 255, 0.08);
-  --krat-tx: #E4EAF5;
-  --krat-tx2: #7B85A0;
-  --krat-tx3: #4A5270;
-  --krat-accent: #00E5FF;
-  --krat-accent2: #0099B8;
-  --krat-green: #00F5A0;
-  --krat-green-bg: rgba(0, 245, 160, 0.10);
-  --krat-red: #FF3B5C;
-  --krat-red-bg: rgba(255, 59, 92, 0.10);
-  --krat-amber: #FFB020;
-  --krat-amber-bg: rgba(255, 176, 32, 0.10);
-  --krat-purple: #A855F7;
-  --krat-purple-bg: rgba(168, 85, 247, 0.10);
-  --krat-border: rgba(255, 255, 255, 0.06);
-  --krat-cyan: #00E5FF;
-  --krat-violet: #7C3AED;
-  --krat-magenta: #FF006E;
-  --krat-magenta-bg: rgba(255, 0, 110, 0.10);
-  --krat-radius: 10px;
 }
 
 /* dark 클래스에도 동일 적용 (shadcn 호환) */
@@ -314,57 +265,6 @@
 .orb-magenta {
   background: radial-gradient(circle, rgba(255, 0, 110, 0.10) 0%, rgba(168, 85, 247, 0.05) 40%, transparent 70%);
   filter: blur(200px);
-}
-
-/* ============================================================
-   LIVE 점 pulse 애니메이션
-   ============================================================ */
-@keyframes krat-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.live-dot {
-  animation: krat-pulse 2s infinite;
-}
-
-/* 수치 변경 플래시 — 시안 글로우에서 자연색으로 */
-@keyframes krat-flash {
-  0% {
-    color: #ffffff;
-    text-shadow: 0 0 14px rgba(0, 229, 255, 0.95), 0 0 28px rgba(0, 229, 255, 0.5);
-    transform: scale(1.16);
-  }
-  55% {
-    text-shadow: 0 0 5px rgba(0, 229, 255, 0.2);
-    transform: scale(1);
-  }
-  100% {
-    text-shadow: none;
-  }
-}
-.animate-krat-flash {
-  animation: krat-flash 0.8s ease-out;
-  display: inline-block;
-}
-
-/* 미션 신규 행 슬라이드인 + 좌측 cyan border 페이드 */
-@keyframes krat-row-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-16px);
-    box-shadow: inset 3px 0 0 #00E5FF;
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: inset 3px 0 0 rgba(0, 229, 255, 0.35);
-  }
-  100% {
-    box-shadow: inset 3px 0 0 rgba(0, 229, 255, 0);
-  }
-}
-.animate-krat-row-in {
-  animation: krat-row-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* 오브 천천히 떠다니는 애니메이션 — 더 극적인 움직임 */

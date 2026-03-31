@@ -7,11 +7,11 @@ const STATUS_CONFIG: Record<
   MqttConnectionStatus,
   { color: string; label: string }
 > = {
-  connected: { color: "bg-krat-green", label: "실시간 연결됨" },
-  connecting: { color: "bg-krat-amber animate-pulse", label: "연결 중..." },
-  disconnected: { color: "bg-krat-tx3", label: "연결 끊김" },
-  error: { color: "bg-krat-red", label: "연결 오류" },
-  idle: { color: "bg-krat-tx3", label: "대기 중" },
+  connected: { color: "bg-green-400", label: "실시간 연결됨" },
+  connecting: { color: "bg-amber-400 animate-pulse", label: "연결 중..." },
+  disconnected: { color: "bg-muted-foreground", label: "연결 끊김" },
+  error: { color: "bg-destructive", label: "연결 오류" },
+  idle: { color: "bg-muted-foreground", label: "대기 중" },
 };
 
 export function MqttStatusIndicator() {
@@ -19,7 +19,7 @@ export function MqttStatusIndicator() {
   const config = STATUS_CONFIG[status];
 
   return (
-    <div className="flex items-center gap-1.5 text-xs text-krat-tx3">
+    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
       <span className={`w-1.5 h-1.5 rounded-full ${config.color}`} />
       <span>{config.label}</span>
     </div>

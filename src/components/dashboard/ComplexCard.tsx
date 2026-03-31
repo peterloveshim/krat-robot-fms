@@ -20,7 +20,7 @@ function MiniDonut({
   if (total === 0) {
     return (
       <div className="w-10 h-10 rounded-full border-2 border-white/[0.08] flex items-center justify-center">
-        <span className="text-[9px] text-krat-tx3">0</span>
+        <span className="text-[9px] text-muted-foreground">0</span>
       </div>
     );
   }
@@ -34,9 +34,9 @@ function MiniDonut({
       className="w-10 h-10 rounded-full relative flex-shrink-0"
       style={{
         background: `conic-gradient(
-          var(--krat-green) 0deg ${opDeg}deg,
-          var(--krat-accent) ${opDeg}deg ${opDeg + chDeg}deg,
-          ${error > 0 ? "var(--krat-red)" : "rgba(255,255,255,0.06)"} ${opDeg + chDeg}deg 360deg
+          #00F5A0 0deg ${opDeg}deg,
+          #00E5FF ${opDeg}deg ${opDeg + chDeg}deg,
+          ${error > 0 ? "#FF3B5C" : "rgba(255,255,255,0.06)"} ${opDeg + chDeg}deg 360deg
         )`,
       }}
     >
@@ -49,7 +49,7 @@ function MiniDonut({
           WebkitBackdropFilter: "blur(8px)",
         }}
       >
-        <span className="text-[11px] font-bold text-krat-tx tabular-nums">{total}</span>
+        <span className="text-[11px] font-bold text-foreground tabular-nums">{total}</span>
       </div>
     </div>
   );
@@ -68,9 +68,9 @@ function StatusDot({
   return (
     <div className="flex items-center gap-1.5">
       <CircleDot size={8} className={colorClass} />
-      <span className="text-[11px] text-krat-tx2 tabular-nums">
+      <span className="text-[11px] text-muted-foreground tabular-nums">
         <span className="font-semibold">{count}</span>
-        <span className="text-krat-tx3 ml-0.5">{label}</span>
+        <span className="text-muted-foreground ml-0.5">{label}</span>
       </span>
     </div>
   );
@@ -97,15 +97,15 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <Building2 size={13} className="text-krat-tx3 flex-shrink-0" />
-            <span className="text-[10px] font-medium text-krat-tx3 tracking-wide">
+            <Building2 size={13} className="text-muted-foreground flex-shrink-0" />
+            <span className="text-[10px] font-medium text-muted-foreground tracking-wide">
               {complex.district}
             </span>
           </div>
-          <div className="text-[14px] font-bold text-krat-tx truncate group-hover:text-white transition-colors">
+          <div className="text-[14px] font-bold text-foreground truncate group-hover:text-white transition-colors">
             {complex.name}
           </div>
-          <div className="text-[10px] text-krat-tx3 mt-0.5">
+          <div className="text-[10px] text-muted-foreground mt-0.5">
             {complex.subtypeLabel}
           </div>
         </div>
@@ -121,17 +121,17 @@ export function ComplexCard({ complex }: ComplexCardProps): JSX.Element {
         <StatusDot
           count={complex.robots.operating}
           label="가동"
-          colorClass="text-krat-green"
+          colorClass="text-green-400"
         />
         <StatusDot
           count={complex.robots.charging}
           label="충전"
-          colorClass="text-krat-accent"
+          colorClass="text-primary"
         />
         <StatusDot
           count={complex.robots.error}
           label="에러"
-          colorClass={complex.robots.error > 0 ? "text-krat-red" : "text-krat-tx3"}
+          colorClass={complex.robots.error > 0 ? "text-destructive" : "text-muted-foreground"}
         />
       </div>
     </div>

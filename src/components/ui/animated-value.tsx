@@ -24,7 +24,7 @@ export function AnimatedValue({ value, className = "" }: Props) {
   }
 
   return (
-    <span key={animKey} className={`${className}${animKey > 0 ? " animate-krat-flash" : ""}`}>
+    <span key={animKey} className={className}>
       {value}
     </span>
   );

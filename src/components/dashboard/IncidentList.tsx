@@ -8,41 +8,41 @@ import type { Incident, IncidentSeverity, IncidentStatus } from "@/lib/mock-data
 function getSeverityBarClass(severity: IncidentSeverity): string {
   switch (severity) {
     case "CRITICAL":
-      return "bg-krat-red";
+      return "bg-destructive";
     case "HIGH":
-      return "bg-krat-amber";
+      return "bg-amber-400";
     case "MEDIUM":
-      return "bg-krat-accent";
+      return "bg-primary";
     case "LOW":
-      return "bg-krat-tx3";
+      return "bg-muted-foreground";
   }
 }
 
 /** 심각도 아이콘 */
 function SeverityIcon({ severity }: { severity: IncidentSeverity }): JSX.Element {
   const colorMap: Record<IncidentSeverity, string> = {
-    CRITICAL: "text-krat-red",
-    HIGH: "text-krat-amber",
-    MEDIUM: "text-krat-accent",
-    LOW: "text-krat-tx3",
+    CRITICAL: "text-destructive",
+    HIGH: "text-amber-400",
+    MEDIUM: "text-primary",
+    LOW: "text-muted-foreground",
   };
 
   const isCritical = severity === "CRITICAL" || severity === "HIGH";
 
   return (
     <div className={`relative w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-      severity === "CRITICAL" ? "bg-krat-red-bg" :
-      severity === "HIGH" ? "bg-krat-amber-bg" :
-      severity === "MEDIUM" ? "bg-krat-accent/10" :
+      severity === "CRITICAL" ? "bg-destructive/10" :
+      severity === "HIGH" ? "bg-amber-400/10" :
+      severity === "MEDIUM" ? "bg-primary/10" :
       "bg-white/[0.04]"
     }`}>
       <AlertTriangle size={14} className={colorMap[severity]} />
       {isCritical && (
         <span className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
-          severity === "CRITICAL" ? "bg-krat-red" : "bg-krat-amber"
+          severity === "CRITICAL" ? "bg-destructive" : "bg-amber-400"
         }`}>
           <span className={`absolute inset-0 rounded-full animate-ping opacity-40 ${
-            severity === "CRITICAL" ? "bg-krat-red" : "bg-krat-amber"
+            severity === "CRITICAL" ? "bg-destructive" : "bg-amber-400"
           }`} />
         </span>
       )}
@@ -54,22 +54,22 @@ function IncidentStatusBadge({ status }: { status: IncidentStatus }): JSX.Elemen
   const config: Record<IncidentStatus, { label: string; className: string; icon: React.ReactNode }> = {
     OPEN: {
       label: "OPEN",
-      className: "bg-krat-red-bg text-krat-red hover:bg-krat-red-bg",
+      className: "bg-destructive/10 text-destructive hover:bg-destructive/10",
       icon: <AlertTriangle size={10} />,
     },
     INVESTIGATING: {
       label: "조사중",
-      className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
+      className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
       icon: <Search size={10} />,
     },
     RESOLVED: {
       label: "해결됨",
-      className: "bg-krat-green-bg text-krat-green hover:bg-krat-green-bg",
+      className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
       icon: null,
     },
     CLOSED: {
       label: "종료",
-      className: "bg-white/[0.04] text-krat-tx3 hover:bg-white/[0.04]",
+      className: "bg-white/[0.04] text-muted-foreground hover:bg-white/[0.04]",
       icon: null,
     },
   };
@@ -84,10 +84,10 @@ function IncidentStatusBadge({ status }: { status: IncidentStatus }): JSX.Elemen
 
 function SeverityLabel({ severity }: { severity: IncidentSeverity }): JSX.Element {
   const config: Record<IncidentSeverity, { label: string; className: string }> = {
-    CRITICAL: { label: "CRITICAL", className: "text-krat-red" },
-    HIGH: { label: "HIGH", className: "text-krat-amber" },
-    MEDIUM: { label: "MEDIUM", className: "text-krat-accent" },
-    LOW: { label: "LOW", className: "text-krat-tx3" },
+    CRITICAL: { label: "CRITICAL", className: "text-destructive" },
+    HIGH: { label: "HIGH", className: "text-amber-400" },
+    MEDIUM: { label: "MEDIUM", className: "text-primary" },
+    LOW: { label: "LOW", className: "text-muted-foreground" },
   };
   const c = config[severity];
   return (
@@ -142,8 +142,8 @@ export function IncidentList({ incidents }: IncidentListProps): JSX.Element {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <SeverityLabel severity={incident.severity} />
-                    <span className="text-krat-tx3">·</span>
-                    <div className="flex items-center gap-1 text-[10px] text-krat-tx3">
+                    <span className="text-muted-foreground">·</span>
+                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                       <Clock size={9} />
                       {new Date(incident.occurredAt).toLocaleString("ko-KR", {
                         month: "2-digit",
@@ -153,10 +153,10 @@ export function IncidentList({ incidents }: IncidentListProps): JSX.Element {
                       })}
                     </div>
                   </div>
-                  <div className="text-[13px] font-semibold text-krat-tx truncate group-hover:text-white transition-colors">
+                  <div className="text-[13px] font-semibold text-foreground truncate group-hover:text-white transition-colors">
                     {incident.title}
                   </div>
-                  <div className="text-[11px] text-krat-tx3 mt-0.5">
+                  <div className="text-[11px] text-muted-foreground mt-0.5">
                     {incident.complexName} · {incident.zoneName}
                   </div>
                 </div>

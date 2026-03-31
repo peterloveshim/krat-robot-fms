@@ -16,33 +16,33 @@ function MissionStatusBadge({ status }: { status: MissionStatus }): JSX.Element 
   const config: Record<MissionStatus, { label: string; className: string; dotClass: string }> = {
     IN_PROGRESS: {
       label: "진행중",
-      className: "bg-krat-purple-bg text-krat-purple hover:bg-krat-purple-bg",
-      dotClass: "bg-krat-purple",
+      className: "bg-purple-500/10 text-purple-400 hover:bg-purple-500/10",
+      dotClass: "bg-purple-400",
     },
     COMPLETED: {
       label: "완료",
-      className: "bg-krat-green-bg text-krat-green hover:bg-krat-green-bg",
-      dotClass: "bg-krat-green",
+      className: "bg-green-400/10 text-green-400 hover:bg-green-400/10",
+      dotClass: "bg-green-400",
     },
     FAILED: {
       label: "실패",
-      className: "bg-krat-red-bg text-krat-red hover:bg-krat-red-bg",
-      dotClass: "bg-krat-red",
+      className: "bg-destructive/10 text-destructive hover:bg-destructive/10",
+      dotClass: "bg-destructive",
     },
     CANCELLED: {
       label: "취소",
-      className: "bg-krat-bg4 text-krat-tx3 hover:bg-krat-bg4",
-      dotClass: "bg-krat-tx3",
+      className: "bg-white/[0.08] text-muted-foreground hover:bg-white/[0.08]",
+      dotClass: "bg-muted-foreground",
     },
     PAUSED: {
       label: "일시정지",
-      className: "bg-krat-amber-bg text-krat-amber hover:bg-krat-amber-bg",
-      dotClass: "bg-krat-amber",
+      className: "bg-amber-400/10 text-amber-400 hover:bg-amber-400/10",
+      dotClass: "bg-amber-400",
     },
     SCHEDULED: {
       label: "예정",
-      className: "bg-krat-accent/10 text-krat-accent hover:bg-krat-accent/10",
-      dotClass: "bg-krat-accent",
+      className: "bg-primary/10 text-primary hover:bg-primary/10",
+      dotClass: "bg-primary",
     },
   };
 
@@ -59,17 +59,17 @@ function MissionStatusBadge({ status }: { status: MissionStatus }): JSX.Element 
 function CoverageBar({ value }: { value: number }): JSX.Element {
   const colorClass =
     value >= 90
-      ? "bg-krat-green"
+      ? "bg-green-400"
       : value >= 50
-        ? "bg-krat-amber"
-        : "bg-krat-red";
+        ? "bg-amber-400"
+        : "bg-destructive";
 
   const textColor =
     value >= 90
-      ? "text-krat-green"
+      ? "text-green-400"
       : value >= 50
-        ? "text-krat-amber"
-        : "text-krat-red";
+        ? "text-amber-400"
+        : "text-destructive";
 
   return (
     <div className="flex items-center gap-2 min-w-[80px]">
@@ -129,7 +129,7 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
               {["로봇", "단지 / 구역", "시작", "면적", "커버리지", "상태"].map((h) => (
                 <TableHead
                   key={h}
-                  className="text-[10px] font-bold text-krat-tx3 uppercase tracking-[0.08em] py-3 px-4"
+                  className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.08em] py-3 px-4"
                 >
                   {h}
                 </TableHead>
@@ -140,27 +140,27 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
             {missions.map((mission, index) => (
               <TableRow
                 key={mission.id}
-                className="border-white/[0.04] glass-table-row animate-krat-row-in group"
+                className="border-white/[0.04] glass-table-row group"
                 style={{ animationDelay: `${index * 35}ms` }}
               >
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-[13px] font-bold text-krat-tx">
+                    <span className="text-[13px] font-bold text-foreground">
                       {mission.robotName}
                     </span>
                     <ArrowUpRight
                       size={12}
-                      className="text-krat-tx3 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
                     />
                   </div>
                 </TableCell>
                 <TableCell className="py-3 px-4">
-                  <div className="text-[12px] text-krat-tx2">{mission.complexName}</div>
-                  <div className="text-[10px] text-krat-tx3">{mission.zoneName}</div>
+                  <div className="text-[12px] text-muted-foreground">{mission.complexName}</div>
+                  <div className="text-[10px] text-muted-foreground/70">{mission.zoneName}</div>
                 </TableCell>
                 <TableCell className="py-3 px-4">
-                  <div className="flex items-center gap-1.5 text-[12px] font-mono text-krat-tx2 tabular-nums">
-                    <Clock size={11} className="text-krat-tx3" />
+                  <div className="flex items-center gap-1.5 text-[12px] font-mono text-muted-foreground tabular-nums">
+                    <Clock size={11} className="text-muted-foreground/70" />
                     {mission.startedAt
                       ? new Date(mission.startedAt).toLocaleString("ko-KR", {
                           month: "2-digit",
@@ -172,10 +172,10 @@ export function MissionsTable({ missions }: MissionsTableProps): JSX.Element {
                   </div>
                 </TableCell>
                 <TableCell className="py-3 px-4">
-                  <span className="text-[13px] font-mono text-krat-tx tabular-nums">
+                  <span className="text-[13px] font-mono text-foreground tabular-nums">
                     {mission.areaCleaned}
                   </span>
-                  <span className="text-[10px] text-krat-tx3 ml-0.5">m²</span>
+                  <span className="text-[10px] text-muted-foreground ml-0.5">m²</span>
                 </TableCell>
                 <TableCell className="py-3 px-4">
                   <CoverageBar value={mission.coveragePct} />

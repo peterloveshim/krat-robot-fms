@@ -52,10 +52,10 @@ function KpiCard({
 }: KpiCardProps): JSX.Element {
   const deltaColor =
     deltaVariant === "up"
-      ? "text-krat-green"
+      ? "text-green-400"
       : deltaVariant === "down"
-        ? "text-krat-red"
-        : "text-krat-tx3";
+        ? "text-destructive"
+        : "text-muted-foreground";
 
   return (
     <div className={`group relative glass-kpi rounded-xl p-4 transition-all duration-300 ${glowClass}`}>
@@ -71,13 +71,13 @@ function KpiCard({
       </div>
 
       {/* 수치 */}
-      <div className="text-[28px] font-extrabold tracking-[-0.04em] text-krat-tx leading-none mb-1">
+      <div className="text-[28px] font-extrabold tracking-[-0.04em] text-foreground leading-none mb-1">
         <AnimatedValue value={value} />
       </div>
 
       {/* 라벨 + 델타 */}
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium text-krat-tx3 uppercase tracking-[0.04em]">
+        <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-[0.04em]">
           {label}
         </span>
         <span className={`text-[11px] font-semibold ${deltaColor}`}>
@@ -99,8 +99,8 @@ export function KpiRow({ data }: KpiRowProps): JSX.Element {
         delta="8개 단지"
         deltaVariant="neutral"
         icon={<Bot size={16} />}
-        accentBg="bg-krat-accent"
-        accentText="text-krat-accent"
+        accentBg="bg-primary"
+        accentText="text-primary"
         glowClass="glow-cyan"
         sparkData={[12, 13, 13, 14, 15, 15, 15]}
       />
@@ -110,8 +110,8 @@ export function KpiRow({ data }: KpiRowProps): JSX.Element {
         delta={`${Math.round((data.operatingRobots / Math.max(data.totalRobots, 1)) * 100)}%`}
         deltaVariant="up"
         icon={<Zap size={16} />}
-        accentBg="bg-krat-green"
-        accentText="text-krat-green"
+        accentBg="bg-green-400"
+        accentText="text-green-400"
         glowClass="glow-green"
         sparkData={[9, 11, 10, 12, 11, 13, 12]}
       />
@@ -121,8 +121,8 @@ export function KpiRow({ data }: KpiRowProps): JSX.Element {
         delta="진행+완료"
         deltaVariant="up"
         icon={<ClipboardList size={16} />}
-        accentBg="bg-krat-purple"
-        accentText="text-krat-purple"
+        accentBg="bg-purple-500"
+        accentText="text-purple-500"
         glowClass="glow-purple"
         sparkData={[18, 22, 20, 28, 30, 32, 34]}
       />
@@ -132,8 +132,8 @@ export function KpiRow({ data }: KpiRowProps): JSX.Element {
         delta="m\u00B2"
         deltaVariant="up"
         icon={<Ruler size={16} />}
-        accentBg="bg-krat-amber"
-        accentText="text-krat-amber"
+        accentBg="bg-amber-400"
+        accentText="text-amber-400"
         glowClass="glow-amber"
         sparkData={[2800, 3200, 3600, 3900, 4100, 4200, 4280]}
       />
@@ -143,8 +143,8 @@ export function KpiRow({ data }: KpiRowProps): JSX.Element {
         delta={data.openIncidents > 0 ? "즉시 확인" : "이상 없음"}
         deltaVariant={data.openIncidents > 0 ? "down" : "neutral"}
         icon={<AlertTriangle size={16} />}
-        accentBg={data.openIncidents > 0 ? "bg-krat-red" : "bg-krat-green"}
-        accentText={data.openIncidents > 0 ? "text-krat-red" : "text-krat-green"}
+        accentBg={data.openIncidents > 0 ? "bg-destructive" : "bg-green-400"}
+        accentText={data.openIncidents > 0 ? "text-destructive" : "text-green-400"}
         glowClass={data.openIncidents > 0 ? "glow-red" : "glow-green"}
         sparkData={[1, 2, 1, 3, 2, 3, data.openIncidents]}
       />

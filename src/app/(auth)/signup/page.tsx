@@ -29,15 +29,15 @@ export default function SignupPage() {
   const passwordValue = useWatch({ control, name: "password" }) ?? "";
 
   return (
-    <div className="bg-krat-bg2 border border-krat-border rounded-xl p-8 space-y-6">
+    <div className="bg-background/[0.03] border border-border rounded-xl p-8 space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-krat-tx">회원가입</h1>
-        <p className="text-sm text-krat-tx3 mt-1">새 계정을 만드세요</p>
+        <h1 className="text-xl font-semibold text-foreground">회원가입</h1>
+        <p className="text-sm text-muted-foreground mt-1">새 계정을 만드세요</p>
       </div>
 
       {/* 서버 에러 배너 */}
       {state?.error && (
-        <div className="bg-krat-red-bg border border-krat-red/20 rounded-lg px-4 py-3 text-sm text-krat-red">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-lg px-4 py-3 text-sm text-destructive">
           {state.error}
         </div>
       )}
@@ -45,35 +45,35 @@ export default function SignupPage() {
       <form action={formAction} className="space-y-4">
         {/* 이메일 */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-krat-tx2">이메일</label>
+          <label className="text-sm font-medium text-muted-foreground">이메일</label>
           <input
             {...register("email")}
             name="email"
             type="email"
             placeholder="your@email.com"
             autoComplete="email"
-            className="w-full h-10 px-3 rounded-lg bg-krat-bg3 border border-krat-border text-sm text-krat-tx placeholder:text-krat-tx3 focus:outline-none focus:border-krat-accent focus:ring-1 focus:ring-krat-accent transition-colors"
+            className="w-full h-10 px-3 rounded-lg bg-background/[0.05] border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
           />
           {errors.email && (
-            <p className="text-xs text-krat-red">{errors.email.message}</p>
+            <p className="text-xs text-destructive">{errors.email.message}</p>
           )}
         </div>
 
         {/* 비밀번호 */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-krat-tx2">비밀번호</label>
+          <label className="text-sm font-medium text-muted-foreground">비밀번호</label>
           <input
             {...register("password")}
             name="password"
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="w-full h-10 px-3 rounded-lg bg-krat-bg3 border border-krat-border text-sm text-krat-tx placeholder:text-krat-tx3 focus:outline-none focus:border-krat-accent focus:ring-1 focus:ring-krat-accent transition-colors"
+            className="w-full h-10 px-3 rounded-lg bg-background/[0.05] border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
           />
 
           {/* 비밀번호 조건 안내 */}
-          <div className="bg-krat-bg3 border border-krat-border rounded-lg p-3 space-y-1.5">
-            <p className="text-xs text-krat-tx3 mb-2">비밀번호 조건</p>
+          <div className="bg-background/[0.05] border border-border rounded-lg p-3 space-y-1.5">
+            <p className="text-xs text-muted-foreground mb-2">비밀번호 조건</p>
             {passwordConditions.map((condition) => {
               const met = condition.test(passwordValue);
               return (
@@ -82,13 +82,13 @@ export default function SignupPage() {
                   className="flex items-center gap-2"
                 >
                   {met ? (
-                    <CheckCircle2 size={13} className="text-krat-green flex-shrink-0" />
+                    <CheckCircle2 size={13} className="text-green-400 flex-shrink-0" />
                   ) : (
-                    <XCircle size={13} className="text-krat-tx3 flex-shrink-0" />
+                    <XCircle size={13} className="text-muted-foreground flex-shrink-0" />
                   )}
                   <span
                     className={`text-xs transition-colors ${
-                      met ? "text-krat-green" : "text-krat-tx3"
+                      met ? "text-green-400" : "text-muted-foreground"
                     }`}
                   >
                     {condition.label}
@@ -99,13 +99,13 @@ export default function SignupPage() {
           </div>
 
           {errors.password && (
-            <p className="text-xs text-krat-red">{errors.password.message}</p>
+            <p className="text-xs text-destructive">{errors.password.message}</p>
           )}
         </div>
 
         {/* 비밀번호 확인 */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-krat-tx2">
+          <label className="text-sm font-medium text-muted-foreground">
             비밀번호 확인
           </label>
           <input
@@ -114,10 +114,10 @@ export default function SignupPage() {
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="w-full h-10 px-3 rounded-lg bg-krat-bg3 border border-krat-border text-sm text-krat-tx placeholder:text-krat-tx3 focus:outline-none focus:border-krat-accent focus:ring-1 focus:ring-krat-accent transition-colors"
+            className="w-full h-10 px-3 rounded-lg bg-background/[0.05] border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
           />
           {errors.confirmPassword && (
-            <p className="text-xs text-krat-red">
+            <p className="text-xs text-destructive">
               {errors.confirmPassword.message}
             </p>
           )}
@@ -126,17 +126,17 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full h-10 rounded-lg bg-krat-accent hover:bg-krat-accent2 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-colors"
+          className="w-full h-10 rounded-lg bg-primary hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground text-sm font-semibold transition-colors"
         >
           {isPending ? "가입 중..." : "회원가입"}
         </button>
       </form>
 
-      <p className="text-sm text-center text-krat-tx3">
+      <p className="text-sm text-center text-muted-foreground">
         이미 계정이 있으신가요?{" "}
         <Link
           href="/login"
-          className="text-krat-accent hover:text-krat-accent2 font-medium transition-colors"
+          className="text-primary hover:text-primary/80 font-medium transition-colors"
         >
           로그인
         </Link>

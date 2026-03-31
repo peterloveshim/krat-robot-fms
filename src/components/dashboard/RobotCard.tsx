@@ -22,19 +22,19 @@ function RobotTypeIndicator({ subtype, status }: { subtype: Robot["subtype"]; st
   let borderClass: string;
 
   if (isWet) {
-    bgClass = "bg-krat-accent/10";
-    textClass = "text-krat-accent";
-    borderClass = "border-krat-accent/20";
+    bgClass = "bg-primary/10";
+    textClass = "text-primary";
+    borderClass = "border-primary/20";
     label = "W";
   } else if (isNamux) {
-    bgClass = "bg-krat-green/10";
-    textClass = "text-krat-green";
-    borderClass = "border-krat-green/20";
+    bgClass = "bg-green-400/10";
+    textClass = "text-green-400";
+    borderClass = "border-green-400/20";
     label = "A";
   } else {
-    bgClass = "bg-krat-amber/10";
-    textClass = "text-krat-amber";
-    borderClass = "border-krat-amber/20";
+    bgClass = "bg-amber-400/10";
+    textClass = "text-amber-400";
+    borderClass = "border-amber-400/20";
     label = "D";
   }
 
@@ -45,8 +45,8 @@ function RobotTypeIndicator({ subtype, status }: { subtype: Robot["subtype"]; st
       {label}
       {/* 활성 상태 펄스 */}
       {isActive && (
-        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-krat-green border-2 border-krat-bg">
-          <span className="absolute inset-0 rounded-full bg-krat-green animate-ping opacity-40" />
+        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-background">
+          <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-40" />
         </span>
       )}
     </div>
@@ -60,13 +60,13 @@ function BatteryGauge({ pct }: { pct: number }): JSX.Element {
 
   const getSegmentColor = (index: number): string => {
     if (index >= filled) return "bg-white/[0.04]";
-    if (pct >= 50) return "bg-krat-green";
-    if (pct >= 20) return "bg-krat-amber";
-    return "bg-krat-red";
+    if (pct >= 50) return "bg-green-400";
+    if (pct >= 20) return "bg-amber-400";
+    return "bg-destructive";
   };
 
   const textColor =
-    pct >= 50 ? "text-krat-green" : pct >= 20 ? "text-krat-amber" : "text-krat-red";
+    pct >= 50 ? "text-green-400" : pct >= 20 ? "text-amber-400" : "text-destructive";
 
   return (
     <div className="flex items-center gap-2">
@@ -98,10 +98,10 @@ function DataPoint({
 }): JSX.Element {
   return (
     <div className="flex flex-col">
-      <span className={`text-[13px] font-semibold font-mono leading-none tabular-nums ${color ?? "text-krat-tx"}`}>
+      <span className={`text-[13px] font-semibold font-mono leading-none tabular-nums ${color ?? "text-foreground"}`}>
         <AnimatedValue value={value} />
       </span>
-      <span className="text-[9px] text-krat-tx3 mt-0.5 uppercase tracking-wider">{label}</span>
+      <span className="text-[9px] text-muted-foreground mt-0.5 uppercase tracking-wider">{label}</span>
     </div>
   );
 }
@@ -147,10 +147,10 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
             <div className="flex items-start gap-3 mb-3">
               <RobotTypeIndicator subtype={robot.subtype} status={robot.status} />
               <div className="flex-1 min-w-0">
-                <div className="text-[14px] font-bold truncate text-krat-tx group-hover:text-white transition-colors">
+                <div className="text-[14px] font-bold truncate text-foreground group-hover:text-white transition-colors">
                   {robot.displayName}
                 </div>
-                <div className="text-[10px] text-krat-tx3 font-mono tracking-wider">
+                <div className="text-[10px] text-muted-foreground font-mono tracking-wider">
                   {robot.serialNumber}
                 </div>
               </div>
@@ -169,7 +169,7 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
                   <DataPoint
                     value={`${robot.cleanWaterPct ?? 0}%`}
                     label="청수"
-                    color="text-krat-accent"
+                    color="text-primary"
                   />
                   <div className="w-px h-6 bg-white/8 self-center" />
                   <DataPoint
@@ -177,8 +177,8 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
                     label="오수"
                     color={
                       (robot.dirtyWaterPct ?? 0) >= 80
-                        ? "text-krat-red"
-                        : "text-krat-tx2"
+                        ? "text-destructive"
+                        : "text-muted-foreground"
                     }
                   />
                   {robot.coveragePct !== undefined && (
@@ -189,10 +189,10 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
                         label="커버리지"
                         color={
                           robot.coveragePct >= 90
-                            ? "text-krat-green"
+                            ? "text-green-400"
                             : robot.coveragePct >= 50
-                              ? "text-krat-amber"
-                              : "text-krat-red"
+                              ? "text-amber-400"
+                              : "text-destructive"
                         }
                       />
                     </>
@@ -205,10 +205,10 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
                     label="커버리지"
                     color={
                       robot.coveragePct >= 90
-                        ? "text-krat-green"
+                        ? "text-green-400"
                         : robot.coveragePct >= 50
-                          ? "text-krat-amber"
-                          : "text-krat-red"
+                          ? "text-amber-400"
+                          : "text-destructive"
                     }
                   />
                   <div className="w-px h-6 bg-white/8 self-center" />
@@ -224,22 +224,22 @@ export function RobotCard({ robot }: RobotCardProps): JSX.Element {
             </div>
 
             {/* 위치 — 하단 */}
-            <div className="flex items-center gap-1.5 text-[11px] text-krat-tx3">
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <MapPin size={11} className="shrink-0" />
               <span className="truncate">
                 {robot.complexName} · {robot.zoneName}
               </span>
-              <Wifi size={10} className="ml-auto shrink-0 text-krat-green opacity-50" />
+              <Wifi size={10} className="ml-auto shrink-0 text-green-400 opacity-50" />
             </div>
           </div>
         </div>
       </TooltipTrigger>
       <TooltipContent
         side="top"
-        className="glass-panel rounded-lg text-krat-tx2 text-xs"
+        className="glass-panel rounded-lg text-muted-foreground text-xs"
       >
         <p>{robot.manufacturer} · {robot.model}</p>
-        <p className="font-mono text-krat-tx3">{robot.firmwareVersion}</p>
+        <p className="font-mono text-muted-foreground/70">{robot.firmwareVersion}</p>
       </TooltipContent>
     </Tooltip>
   );

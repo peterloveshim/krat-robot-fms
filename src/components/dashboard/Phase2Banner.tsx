@@ -26,17 +26,17 @@ export function Phase2Banner(): JSX.Element {
 
       <div className="relative flex items-center gap-4">
         <div className="w-10 h-10 rounded-lg bg-white/[0.04] flex items-center justify-center flex-shrink-0">
-          <Lock size={16} className="text-krat-tx3" />
+          <Lock size={16} className="text-muted-foreground" />
         </div>
         <div>
-          <div className="text-[12px] font-bold text-krat-tx3 tracking-wide mb-1">
+          <div className="text-[12px] font-bold text-muted-foreground tracking-wide mb-1">
             Phase 2에서 추가될 영역
           </div>
           <div className="flex flex-wrap gap-x-1.5 gap-y-1">
             {features.map((feature) => (
               <span
                 key={feature}
-                className="text-[11px] text-krat-tx3/60 after:content-['·'] after:ml-1.5 after:text-krat-tx3/30 last:after:content-none"
+                className="text-[11px] text-muted-foreground/60 after:content-['·'] after:ml-1.5 after:text-muted-foreground/30 last:after:content-none"
               >
                 {feature}
               </span>

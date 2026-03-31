@@ -108,7 +108,7 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
         </div>
         <div>
           <div className="text-[15px] font-extrabold tracking-[-0.02em]">KRAT FMS</div>
-          <div className="text-[9px] text-krat-tx3 font-mono tracking-wider">v2.2 PHASE 1</div>
+          <div className="text-[9px] text-muted-foreground font-mono tracking-wider">v2.2 PHASE 1</div>
         </div>
       </div>
 
@@ -118,7 +118,7 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
       <nav className="flex-1 overflow-y-auto px-3">
         {NAV_GROUPS.map((group) => (
           <div key={group.title} className="mb-1">
-            <div className="text-[9px] font-bold text-krat-tx3 uppercase tracking-[0.12em] px-3 py-2 mt-4">
+            <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.12em] px-3 py-2 mt-4">
               {group.title}
             </div>
             {group.items.map((item) => (
@@ -146,13 +146,13 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[12px] font-semibold truncate">{displayName}</div>
-            <div className="text-[10px] text-krat-tx3 font-mono">{role}</div>
+            <div className="text-[10px] text-muted-foreground font-mono">{role}</div>
           </div>
           {/* 로그아웃 버튼 */}
           <form action={signOut}>
             <button
               type="submit"
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-krat-tx3 hover:text-krat-red hover:bg-krat-red-bg transition-colors flex-shrink-0"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors flex-shrink-0"
               title="로그아웃"
             >
               <LogOut size={14} />
@@ -170,10 +170,10 @@ function NavItemButton({ item }: { item: NavItem }): JSX.Element {
 
   if (item.phase2) {
     return (
-      <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium text-krat-tx2 opacity-30 pointer-events-none select-none">
+      <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium text-muted-foreground opacity-30 pointer-events-none select-none">
         <span className="opacity-60 flex-shrink-0">{item.icon}</span>
         <span className="flex-1">{item.label}</span>
-        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-krat-bg4 text-krat-tx3 tracking-wider">
+        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-white/[0.08] text-muted-foreground tracking-wider">
           P2
         </span>
       </div>
@@ -185,19 +185,19 @@ function NavItemButton({ item }: { item: NavItem }): JSX.Element {
       href={item.href}
       className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 ${
         isActive
-          ? "bg-krat-accent/10 text-krat-accent font-semibold"
-          : "text-krat-tx2 hover:bg-white/[0.04] hover:text-krat-tx"
+          ? "bg-primary/10 text-primary font-semibold"
+          : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
       }`}
     >
       {/* Active 인디케이터 — 좌측 바 */}
       {isActive && (
         <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-krat-accent"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary"
           style={{ boxShadow: "0 0 8px rgba(0, 229, 255, 0.5)" }}
         />
       )}
 
-      <span className={`flex-shrink-0 transition-colors ${isActive ? "text-krat-accent" : "text-krat-tx3"}`}>
+      <span className={`flex-shrink-0 transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
         {item.icon}
       </span>
       <span className="flex-1">{item.label}</span>
@@ -206,15 +206,15 @@ function NavItemButton({ item }: { item: NavItem }): JSX.Element {
         <Badge
           className={`text-[10px] px-1.5 py-0 rounded-md border-0 font-bold min-w-[20px] justify-center ${
             item.badge.variant === "red"
-              ? "bg-krat-red-bg text-krat-red hover:bg-krat-red-bg"
-              : "bg-krat-accent/15 text-krat-accent hover:bg-krat-accent/15"
+              ? "bg-destructive/10 text-destructive hover:bg-destructive/10"
+              : "bg-primary/15 text-primary hover:bg-primary/15"
           }`}
         >
           {item.badge.count}
         </Badge>
       ) : (
         isActive && (
-          <ChevronRight size={14} className="text-krat-accent/50" />
+          <ChevronRight size={14} className="text-primary/50" />
         )
       )}
     </Link>
@@ -233,7 +233,7 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
     <>
       {/* 모바일 햄버거 버튼 */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 w-9 h-9 rounded-lg glass-card flex items-center justify-center text-krat-tx2 hover:text-krat-tx transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 w-9 h-9 rounded-lg glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
         onClick={() => setMobileOpen(true)}
         aria-label="메뉴 열기"
       >
@@ -254,7 +254,7 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
           />
           <aside className="relative w-[230px] h-full glass-heavy flex flex-col z-50">
             <button
-              className="absolute top-4 right-4 text-krat-tx3 hover:text-krat-tx transition-colors"
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
               onClick={() => setMobileOpen(false)}
               aria-label="메뉴 닫기"
             >
