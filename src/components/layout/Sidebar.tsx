@@ -8,7 +8,7 @@ import type { User } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MqttStatusIndicator } from "@/components/layout/MqttStatusIndicator";
-import { signOut } from "@/lib/auth/actions";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard,
   Bot,
@@ -84,14 +84,14 @@ const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
   },
 ];
 
-function SidebarContent({ user }: { user: User }): JSX.Element {
+function SidebarContent({ user, onLogout }: { user: User | null; onLogout: () => void }): JSX.Element {
   // full_name 메타데이터 -> 이메일 prefix -> "사용자" 순으로 폴백
   const displayName =
-    (user.user_metadata?.full_name as string | undefined) ??
-    user.email?.split("@")[0] ??
+    (user?.user_metadata?.full_name as string | undefined) ??
+    user?.email?.split("@")[0] ??
     "사용자";
   const avatarInitial = displayName.charAt(0).toUpperCase();
-  const role = (user.user_metadata?.role as string | undefined) ?? "USER";
+  const role = (user?.user_metadata?.role as string | undefined) ?? "USER";
 
   return (
     <div className="flex flex-col h-full">
@@ -139,16 +139,15 @@ function SidebarContent({ user }: { user: User }): JSX.Element {
             <div className="text-[12px] font-semibold truncate">{displayName}</div>
             <div className="text-[10px] text-muted-foreground font-mono">{role}</div>
           </div>
-          {/* 로그아웃 버튼 */}
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors flex-shrink-0"
-              title="로그아웃"
-            >
-              <LogOut size={14} />
-            </button>
-          </form>
+          {/* 로그아웃 버튼 — optimistic: 즉시 /login 이동 */}
+          <button
+            type="button"
+            onClick={onLogout}
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors flex-shrink-0"
+            title="로그아웃"
+          >
+            <LogOut size={14} />
+          </button>
         </div>
       </div>
     </div>
@@ -209,13 +208,10 @@ function NavItemButton({ item }: { item: NavItem }): JSX.Element {
   );
 }
 
-type SidebarProps = {
-  user: User;
-};
-
 // 모바일 햄버거 포함 래퍼 — glass 사이드바
-export function Sidebar({ user }: SidebarProps): JSX.Element {
+export function Sidebar(): JSX.Element {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <>
@@ -230,7 +226,7 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
 
       {/* 데스크톱 사이드바 */}
       <aside className="hidden lg:flex flex-col w-[230px] h-screen sticky top-0 bg-[#080808] border-r border-sidebar-border flex-shrink-0">
-        <SidebarContent user={user} />
+        <SidebarContent user={user} onLogout={logout} />
       </aside>
 
       {/* 모바일 오버레이 */}
@@ -248,7 +244,7 @@ export function Sidebar({ user }: SidebarProps): JSX.Element {
             >
               <X size={18} />
             </button>
-            <SidebarContent user={user} />
+            <SidebarContent user={user} onLogout={logout} />
           </aside>
         </div>
       )}

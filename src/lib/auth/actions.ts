@@ -18,10 +18,31 @@ export async function signIn(
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  type SignInResult = Awaited<
+    ReturnType<typeof supabase.auth.signInWithPassword>
+  >;
 
-  if (error) {
-    return { error: mapAuthError(error.message) };
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("timeout")), 6_000),
+  );
+
+  let result: SignInResult;
+  try {
+    result = await Promise.race([
+      supabase.auth.signInWithPassword({ email, password }),
+      timeout,
+    ]);
+  } catch (err) {
+    const isTimeout = err instanceof Error && err.message === "timeout";
+    return {
+      error: isTimeout
+        ? "서비스 응답 시간이 초과됐습니다. 잠시 후 다시 시도해주세요."
+        : "서비스에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.",
+    };
+  }
+
+  if (result.error) {
+    return { error: mapAuthError(result.error.message) };
   }
 
   redirect("/");
