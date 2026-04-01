@@ -1,11 +1,14 @@
+import { AnimatedBackground } from "@/components/auth/AnimatedBackground";
+
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-[400px]">
+    <div className="relative min-h-screen bg-background flex items-center justify-center p-4">
+      <AnimatedBackground />
+      <div className="relative z-10 w-full max-w-[400px]">
         {/* KRAT 로고 */}
         <div className="flex items-center gap-3 mb-8 justify-center">
           <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-black text-[16px] font-bold flex-shrink-0">
