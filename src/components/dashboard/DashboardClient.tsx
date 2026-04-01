@@ -38,7 +38,7 @@ export function DashboardClient(): JSX.Element {
   return (
     <>
       <KpiRow data={data.kpiData} />
-      <RobotGrid robots={data.robots} />
+      <RobotGrid robots={data.robots} isLoading={data.isLoading} />
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 mb-8 items-stretch">
         <div className="xl:col-span-3 flex flex-col">
           <MissionsTable missions={data.missions} />
