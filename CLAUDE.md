@@ -206,8 +206,66 @@ channel.subscribe();
 
 ---
 
+## 인증 상태 관리 패턴
+
+### AuthContext — 브라우저 인증 상태의 단일 출처
+
+`src/contexts/AuthContext.tsx`에 `AuthProvider` / `useAuth` 훅이 정의되어 있다.
+대시보드 레이아웃(`(dashboard)/layout.tsx`)의 `AuthGuard` 안에 감싸져 있음.
+
+```
+AuthGuard (보안 게이트)
+  └── AuthProvider (user 상태 공유)
+        └── Sidebar, 기타 컴포넌트 → useAuth() 소비
+```
+
+- `user` 정보가 필요한 컴포넌트는 `useAuth()`를 사용 — 개별 `getUser()` 호출 금지
+- `onAuthStateChange` 구독으로 세션 변화(만료 등) 자동 반영
+
+### Logout — window.location.href로 원자적 처리
+
+로그아웃은 `window.location.href = "/api/auth/signout"` 으로 처리한다.
+
+```ts
+// ✅ Good — AuthContext.logout() 패턴
+function logout() {
+  // GET /api/auth/signout: 서버 쿠키 제거 → /login 리다이렉트 (원자적)
+  window.location.href = "/api/auth/signout";
+}
+
+// ❌ Bad — router.push("/login") 먼저 호출 (레이스 컨디션!)
+// proxy.ts가 유효한 세션으로 /login 접근을 /로 되돌림
+// 쿠키 제거(fetch)가 완료되기 전에 /login 도달 시 proxy가 / 로 리다이렉트
+
+// ❌ Bad — Server Action으로 로그아웃 (Supabase 응답까지 블로킹, UI 피드백 없음)
+<form action={signOut}>...</form>
+```
+
+> **레이스 컨디션 주의**: proxy.ts는 로그인된 사용자가 /login 접근 시 /로 리다이렉트한다.
+> `router.push("/login")` + 백그라운드 쿠키 제거를 함께 쓰면 쿠키가 아직 살아있어
+> proxy가 되돌려 보낸다. GET /api/auth/signout을 통한 full navigation이 유일하게 안전하다.
+
+### 로그인 피드백
+
+`useActionState`의 `isPending`으로 로딩 상태를 표시한다.
+
+```tsx
+const [state, formAction, isPending] = useActionState(signIn, initialState);
+<button type="submit" disabled={isPending}>
+  {isPending ? "로그인 중..." : "로그인"}
+</button>
+```
+
+> **[IMPORTANT]** submit 버튼에 `onClick`으로 `setState` 호출 금지 — 버튼이 즉시 `disabled`가 되면
+> React 19의 `useActionState` 폼 액션 메커니즘이 Server Action을 실행하지 않음.
+
+로그인 자체는 Server Action 유지 (HTTP-only 쿠키 보안 필수).
+
+---
+
 ## 중요 참고
 
 - [**IMPORTANT**] 보안 이슈가 있는 경우 매번 확인을 요청할 것
 - [**IMPORTANT**] Phase1 까지만 개발할 것
 - 로그인 페이지에서 미리 입력한 비번, 패스워드 부분 수정하지 않기, 외부에서 미리 해당 이메일로 로그인하고 테스트해보기 위함
+- [**IMPORTANT**] src/middleware.ts 생성 금지, 대신 src/proxy.ts를 사용, 참고: https://nextjs.org/docs/app/getting-started/proxy

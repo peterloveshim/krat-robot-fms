@@ -20,6 +20,8 @@ export type DashboardData = {
   missions: Mission[];
   incidents: Incident[];
   consumables: Consumable[];
+  isLoading: boolean;
+  fetchError: string | null;
 };
 
 const initialEmpty: DashboardData = {
@@ -35,6 +37,8 @@ const initialEmpty: DashboardData = {
   missions: [],
   incidents: [],
   consumables: [],
+  isLoading: true,
+  fetchError: null,
 };
 
 export function useDashboardRealtime(): DashboardData {
@@ -51,9 +55,18 @@ export function useDashboardRealtime(): DashboardData {
       fetchKpiDataClient(),
       fetchRecentMissionsClient(),
       fetchOpenIncidentsClient(),
-    ]).then(([robots, complexes, consumables, kpiData, missions, incidents]) => {
-      setData({ robots, complexes, consumables, kpiData, missions, incidents });
-    });
+    ])
+      .then(([robots, complexes, consumables, kpiData, missions, incidents]) => {
+        setData({ robots, complexes, consumables, kpiData, missions, incidents, isLoading: false, fetchError: null });
+      })
+      .catch((err: unknown) => {
+        console.error("[Dashboard] 데이터 fetch 실패:", err);
+        setData((prev) => ({
+          ...prev,
+          isLoading: false,
+          fetchError: "서비스에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.",
+        }));
+      });
 
     // robots 변경 → robots + complexes + consumables + kpi 갱신
     const robotsChannel = supabase
